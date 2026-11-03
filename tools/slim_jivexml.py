@@ -4,7 +4,9 @@
 Usage:  python3 -I tools/slim_jivexml.py OUT_DIR IN_FILE [IN_FILE ...]
 
 What it keeps and why:
-  - Tracks: the inner-detector collection 'Tracks' (only the fields Phoenix reads) and ONE collection of
+  - Tracks: the inner-detector collection 'Tracks' (only the fields Phoenix reads; tracks with no pixel or SCT
+    hit are dropped: built from the TRT alone they have no measured position along the beam and often absurd
+    momenta, e.g. 575 GeV) and ONE collection of
     long tracks, 'LongTracks': the combined-fit muon tracks, plus any ConvertedStaco track that no combined-fit
     track matches. Each long track replaces its matching inner track, so every muon is one track from the
     beam line to the muon chambers. The neutral name keeps the word "Muon" out of the file (golden rule).
@@ -110,11 +112,15 @@ def slim(src, dst):
     inner_el = by_key[('Track', 'Tracks')]
     inner = entries(inner_el)
     replaced = [i for i, r in enumerate(inner) if any(same_particle(r, l) for l in long_rows)]
-    inner = [r for i, r in enumerate(inner) if i not in set(replaced)]
+    no_silicon = [i for i, r in enumerate(inner)
+                  if float(r['nPixHits'][0]) + float(r['nSCTHits'][0]) == 0]
+    drop = set(replaced) | set(no_silicon)
+    inner = [r for i, r in enumerate(inner) if i not in drop]
     out.append(build('Track', {'storeGateKey': 'Tracks'}, inner, ID_TRACK_FIELDS))
     if long_rows:
         out.append(build('Track', {'storeGateKey': 'LongTracks'}, long_rows, LONG_TRACK_FIELDS))
-    report['tracks'] = f'{len(inner)} inner + {len(long_rows)} long ({len(added)} from {LONG_EXTRA}, {len(replaced)} inner replaced)'
+    report['tracks'] = (f'{len(inner)} inner + {len(long_rows)} long ({len(added)} from {LONG_EXTRA}, '
+                        f'{len(replaced)} inner replaced, {len(no_silicon)} TRT-only dropped)')
 
     # Calorimeter cells above threshold.
     ncells = 0

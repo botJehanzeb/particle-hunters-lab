@@ -1,0 +1,61 @@
+{
+ "about": "Balance set for the question 'In which view is momentum conserved?': 7 real 2012 events from ATLAS ZPath 2015 Masterclass dataset 8 (CERN Open Data record 360), chosen with tools/find_balance_events.py and slimmed by tools/slim_jivexml.py.",
+ "events": [
+  {
+   "file": "C-event022.xml",
+   "source": "dataset 8, group C, event022.xml",
+   "run": 204796,
+   "event": 1301802,
+   "date": "2012-06-11 02:12:56 UTC",
+   "data": true
+  },
+  {
+   "file": "J-event046.xml",
+   "source": "dataset 8, group J, event046.xml",
+   "run": 206497,
+   "event": 3440391,
+   "date": "2012-07-06 03:45:34 CEST",
+   "data": true
+  },
+  {
+   "file": "L-event015.xml",
+   "source": "dataset 8, group L, event015.xml",
+   "run": 206497,
+   "event": 3499793,
+   "date": "2012-07-06 03:45:48 CEST",
+   "data": true
+  },
+  {
+   "file": "M-event021.xml",
+   "source": "dataset 8, group M, event021.xml",
+   "run": 206497,
+   "event": 3529243,
+   "date": "2012-07-06 03:45:54 CEST",
+   "data": true
+  },
+  {
+   "file": "P-event035.xml",
+   "source": "dataset 8, group P, event035.xml",
+   "run": 206497,
+   "event": 3627333,
+   "date": "2012-07-06 03:46:17 CEST",
+   "data": true
+  },
+  {
+   "file": "O-event035.xml",
+   "source": "dataset 8, group O, event035.xml",
+   "run": 204796,
+   "event": 1861141,
+   "date": "2012-06-11 02:14:42 UTC",
+   "data": true
+  },
+  {
+   "file": "C-event020.xml",
+   "source": "dataset 8, group C, event020.xml",
+   "run": 206497,
+   "event": 4789633,
+   "date": "2012-07-06 03:50:43 CEST",
+   "data": true
+  }
+ ]
+}
