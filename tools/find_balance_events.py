@@ -20,6 +20,10 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+# Electrons count only if ATLAS's identification (isEMString) is Medium or TightPP. In dataset 8, entries
+# marked 'none' have E/p of about 3–14 (fakes); TightPP ones have E/p near 1, as real electrons do.
+GOOD_ELECTRON = {'Medium', 'TightPP'}
+
 
 def nums(el, tag):
     c = el.find(tag)
@@ -33,7 +37,10 @@ def leptons(root):
         if (el.tag, key) not in (('Muon', 'Muons'), ('Electron', 'ElectronAODCollection')):
             continue
         pt, eta, phi, pdg = nums(el, 'pt'), nums(el, 'eta'), nums(el, 'phi'), nums(el, 'pdgId')
+        quality = (el.find('isEMString').text or '').split() if el.find('isEMString') is not None else []
         for i in range(len(pt)):
+            if el.tag == 'Electron' and quality[i] not in GOOD_ELECTRON:
+                continue  # 'none'/'Loose' entries are mostly jets and photons (E/p far above 1)
             lim = 2.5 if el.tag == 'Muon' else 2.47
             if pt[i] > 20 and abs(eta[i]) < lim:
                 out.append({'flav': el.tag, 'q': -math.copysign(1, pdg[i]), 'pt': pt[i], 'eta': eta[i], 'phi': phi[i],
