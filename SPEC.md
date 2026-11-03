@@ -19,28 +19,34 @@ Each stage goes live before the next one starts.
 
 **C6 — sanity check:** every event in both sets loads, the header shows Real data with its date, and the muon tracks reach the chambers. *Done when:* everything checks out and is committed.
 
-Last done: C5. `tools/make_answers.py` writes draft labels for both sets from ATLAS's reconstruction in the raw files: Z→ee / Z→μμ (with the two-lepton mass), W→eν / W→μν, 4-lepton, or no clear lepton; each has `checked: false` until a person agrees. **`answers.json` is NOT in this repo** (anything here is downloadable from the site): it lives in the project's private work folder; how Stage 2 checks answers is decided then. Electrons count only if `isEMString` is Medium or TightPP (entries marked `none` are mostly fakes, E/p 3–14); the balance scan uses the same cut and all 7 balance events still pass. Browse set: 16 Z→μμ, 11 Z→ee, 2 W→eν, 1 four-lepton (A-event027: e⁺e⁻μ⁺μ⁻), 20 no clear lepton; masses include the Z peak (15 between 84 and 98 GeV) and low-mass pairs near 3 and 9 GeV. Before that, C4. `events/balance/` holds 7 real two-lepton events (index.json lists them): C-event020, C-event022 (ee), J-event046, L-event015, M-event021, O-event035 (ee), P-event035; picked with `tools/find_balance_events.py` (reads labels offline only) from groups B–T. Checked on the published files: tracks ≥ 10 GeV plus missing energy sum to 2–28 GeV across the beam but 92–469 GeV along it (7–43× larger). No large-missing-energy event survived (the one candidate's electron had no silicon track). The picture is only clear once D6's pT cut hides the soft tracks; the set switch is E1. **C2 changed:** slimming now drops inner tracks with no pixel or SCT hit (TRT-only: no measured z, momenta up to 575 GeV; 2,216 dropped across the browse set); all events re-slimmed. Last done: C3. `events/50/index.json` lists the browse set in order (file, source, run, event, date, data flag; no answers). The page fetches an event only when shown, keeps fetched files, prefetches the neighbours, and shows "Shown in N ms" (remove in polish). Plain Previous / Next and "Event i/50" are in the event panel; D1 adds the dropdown. Before that, C2: `tools/slim_jivexml.py`; muons are one `LongTracks` collection (combined-fit + unmatched ConvertedStaco tracks, each replacing its matching inner track, `<hits>` kept for D6); labels, trigger info, truth tracks, segments, vertices, FCAL and extra jet/MET collections dropped; the script refuses to write Muon/Electron/Photon. **The browse set is 50 real events:** group A's 5 simulated events (007, 016, 017, 038, 047: run 110158026 / 100001, no date) were replaced by real group B events 001–005, in the same slots. Files are named by source (`A-event001.xml`, `B-event001.xml`). The 50 come from 8 runs, 10 June – 6 July 2012. The masterclass groups mix in simulated events on purpose (group B: 6 of 50), so check the data flag whenever events are picked (C4). C1: 50 files, all load. Before that, B4. Layer switches (tracks, energy deposits, muon-chamber hits, jets off by default, missing energy) and a colour key under the views; each switch works in both views (tested). `js/prepare.js` turns Phoenix's event data into the two views: barrel-only objects for Phoenix (end view), everything for the side view; one jet collection (`AntiKt4LCTopoJets`), one missing-energy collection (`MET_RefFinal`); particle labels never passed on; cells below 0.5 GeV dropped (same as C2). Phase B is complete (B5 was decided earlier). Open: deposits are drawn thin (6 cm wide, from the test page) and hard to see. Full step list: Phases A–E in the build plan (kept outside this repo).
+Done: Phases A and B; C1–C5. Full step list: Phases A–E in the build plan (kept outside this repo).
+
+Open items: deposits are drawn thin (6 cm wide) and hard to see; the balance set only reads clearly once D6's pT cut hides soft tracks; remove the "Shown in N ms" note in polish (E).
 
 ## How it is built
 
 - **3D display:** [Phoenix](https://hepsoftwarefoundation.org/phoenix/) 4.2.3 with three.js 0.184.0, from a CDN. Versions pinned; do not upgrade. Load three.js as a module, set the global `THREE`, *then* load the Phoenix bundle.
-- **Two views:** Phoenix draws the end view (barrel only). The page draws its own ρ–z side view (barrel + end-caps, tracks at full length). The page handles clicks and highlights in both views; Phoenix's own selection is not used.
-- **Detector drawing:** our own simplified one, with muon chambers at the real radii.
-- **Data:** ATLAS ZPath 2015 Masterclass, dataset 8 ([CERN Open Data record 360](https://opendata.cern.ch/record/360)): real 2012 collisions, CC0, JiveXML files that Phoenix reads directly. Two sets: package A (50 events) to browse, and about 7 hand-picked events for the momentum question. Each event is slimmed to under 1 MB and loaded only when shown.
+- **Two views:** Phoenix draws the end view from barrel-only objects; the page draws its own ρ–z side view (barrel + end-caps) from all objects (`js/prepare.js`). The page handles clicks and highlights in both views; Phoenix's own selection is not used.
+- **Detector drawing** (`js/detector.js`): muon-chamber bands measured from the hits of all 50 group A events. Barrel vs end-cap comes from each hit's `identifier` station name (B = barrel; BEE counts as end-cap). In the end view a barrel hit is drawn across its chamber at the hit's distance from the beam.
+- **Events load one at a time** when shown, with the neighbours prefetched (`js/main.js`). Layer switches: tracks, deposits, muon hits, jets (off by default), missing energy.
+
+## Data
+
+- Source: ATLAS ZPath 2015 Masterclass, dataset 8 ([CERN Open Data record 360](https://opendata.cern.ch/record/360)), CC0, JiveXML. Groups mix in simulated events (no date, lumiBlock 0); always check the data flag.
+- **Browse set** `events/50/`: 50 real 2012 events (8 runs, 10 June – 6 July): group A's 45 real ones plus group B 001–005 in the slots of A's 5 simulated ones. `index.json` gives the order, source, run, event, date and data flag.
+- **Balance set** `events/balance/`: 7 real two-lepton events (C-020, C-022, J-046, L-015, M-021, O-035, P-035) where the end view balances and the side view doesn't (checked: 2–28 GeV across vs 92–469 GeV along the beam). No usable large-missing-energy event was found.
+- **Slimming** (`tools/slim_jivexml.py`): keeps inner tracks with silicon hits (TRT-only tracks dropped: no z, absurd momenta), one `LongTracks` collection for muons (combined-fit + unmatched ConvertedStaco, each replacing its inner track; `<hits>` kept for D6), cells ≥ 0.5 GeV, all muon hits with `identifier`/`id`, `AntiKt4LCTopoJets`, `MET_RefFinal`. Drops particle labels, trigger info, truth tracks, segments, vertices, FCAL. Refuses to write a file containing Muon/Electron/Photon.
+- **Answers:** `tools/make_answers.py` drafts labels (Z→ee/μμ with mass, W→eν/μν, 4-lepton, no clear lepton; `checked: false`). Electrons count only if `isEMString` is Medium or TightPP. **`answers.json` is kept out of this repo**, since everything here is downloadable; how Stage 2 checks answers is decided then.
+- `tools/find_balance_events.py` picked the balance set; it and `make_answers.py` read labels from raw files offline only.
 
 ## Folder layout
 
-Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix, reads the test event, renders both views; status list shows progress and any error), `js/detector.js` (simplified detector and muon-chamber geometry), `js/prepare.js` (event data → what each view draws), `events/50/` (50 slimmed real events + `index.json`, the browse order), `tools/slim_jivexml.py` (slimming), `SPEC.md`.
-
-Planned (proposed, change if a step needs it):
-
 ```
-index.html        the page
-css/  js/         styles and scripts, plain files
-events/50/        slimmed JiveXML (group A + 5 real group B events) and index.json
-events/balance/   the 7 momentum-question events and index.json
-(answers.json)    our labels per event — kept OUT of this repo, see Current step
-tools/            Python helpers (slim_jivexml.py, balance-set picker); not used by the page
+index.html  css/style.css  js/main.js  js/detector.js  js/prepare.js
+events/50/        browse set + index.json
+events/balance/   balance set + index.json
+tools/            Python helpers (not used by the page)
+SPEC.md
 ```
 
 ## Rules
