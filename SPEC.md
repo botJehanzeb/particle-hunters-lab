@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**A3 — page skeleton:** header, a large 3D area, a side panel for event info, a bottom panel for the object table. Placeholders only. *Done when:* the layout looks right on a laptop and on a phone.
+**B1 — load Phoenix:** load three.js as a module, set the global `THREE`, then load the Phoenix bundle (the README's old `three.min.js` no longer exists). *Done when:* Phoenix starts and the console shows no errors.
 
-Last done: A2 (this file). Full step list: Phases A–E in the build plan (kept outside this repo).
+Last done: A3 (page skeleton). Full step list: Phases A–E in the build plan (kept outside this repo).
 
 ## How it is built
 
@@ -30,7 +30,7 @@ Last done: A2 (this file). Full step list: Phases A–E in the build plan (kept 
 
 ## Folder layout
 
-Now: `index.html` (Hello placeholder), `SPEC.md`.
+Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `SPEC.md`.
 
 Planned (proposed, change if a step needs it):
 
