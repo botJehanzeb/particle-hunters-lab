@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**C1 — download dataset 8:** unzip package A (group A): the 50 events to browse. *Done when:* there are 50 event files and one of them opens in the loader. (Already downloaded outside the repo on 3 Nov: `Projects/Particle-Hunters-Lab/data/dataset8/groupA/`, 50 files, 108 MB.)
+**C2 — slim events:** `tools/slim_jivexml.py`: drop raw inner-detector hits; keep tracks, calorimeter cells above 0.5 GeV, muon-chamber hits (with their `identifier`), clusters, jets and missing energy; remove `Electron`/`Muon`/`Photon`; rename `<TILE>` to `<Tile>`. *Done when:* each event is under 1 MB.
 
-Last done: B4. Layer switches (tracks, energy deposits, muon-chamber hits, jets off by default, missing energy) and a colour key under the views; each switch works in both views (tested). `js/prepare.js` turns Phoenix's event data into the two views: barrel-only objects for Phoenix (end view), everything for the side view; one jet collection (`AntiKt4LCTopoJets`), one missing-energy collection (`MET_RefFinal`); particle labels never passed on; cells below 0.5 GeV dropped (same as C2). Phase B is complete (B5 was decided earlier). Open: deposits are drawn thin (6 cm wide, from the test page) and hard to see. Full step list: Phases A–E in the build plan (kept outside this repo).
+Last done: C1 (group A: 50 files, all load in Phoenix's JiveXML loader with tracks, hits and cells; all from run 206497, 2012-07-06). Before that, B4. Layer switches (tracks, energy deposits, muon-chamber hits, jets off by default, missing energy) and a colour key under the views; each switch works in both views (tested). `js/prepare.js` turns Phoenix's event data into the two views: barrel-only objects for Phoenix (end view), everything for the side view; one jet collection (`AntiKt4LCTopoJets`), one missing-energy collection (`MET_RefFinal`); particle labels never passed on; cells below 0.5 GeV dropped (same as C2). Phase B is complete (B5 was decided earlier). Open: deposits are drawn thin (6 cm wide, from the test page) and hard to see. Full step list: Phases A–E in the build plan (kept outside this repo).
 
 ## How it is built
 
