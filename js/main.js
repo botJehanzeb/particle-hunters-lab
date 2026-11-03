@@ -55,5 +55,27 @@ try { ed.getThreeManager().getRendererManager().getMainRenderer().setAnimationLo
 
 status('Phoenix 4.2.3 started');
 
+// ---------- B2: read one event with Phoenix's JiveXML loader ----------
+// Test event: dataset 8, group A, event001, with particle labels removed and <TILE> renamed <Tile>.
+const TEST_EVENT = 'events/test/event001.xml';
+
+const countAll = (groups) =>
+  Object.values(groups || {}).reduce((n, list) => n + (Array.isArray(list) ? list.length : 0), 0);
+
+async function readEvent(url) {
+  if (!window.JiveXMLLoader) throw new Error('Phoenix JiveXMLLoader is missing');
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Could not load ${url} (${res.status})`);
+  const loader = new JiveXMLLoader();
+  loader.process(await res.text());
+  return loader.getEventData();
+}
+
+const ev = await readEvent(TEST_EVENT);
+const nTracks = countAll(ev.Tracks);
+const nDeposits = countAll(ev.CaloCells) + countAll(ev.CaloClusters);
+const nHits = countAll(ev.Hits);
+status(`Event ${ev.eventNumber} (run ${ev.runNumber}): ${nTracks} tracks, ${nDeposits} energy deposits, ${nHits} muon-chamber hits`);
+
 // Shared with later steps.
-window.lab = { THREE, ed };
+window.lab = { THREE, ed, readEvent, ev };

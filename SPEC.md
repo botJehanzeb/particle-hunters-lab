@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**B2 — read one event:** load one event file with Phoenix's JiveXML loader and print how many tracks, deposits and muon hits it has. *Done when:* a status line shows the three counts.
+**B3 — detector drawing:** draw our own simplified detector: rings for the inner detector and calorimeters, 16 flat muon sectors per layer at the real radii, and sections for the side view. *Done when:* in a real event, the muon hits fall inside the blue chambers.
 
-Last done: B1 (Phoenix loads; `js/main.js` exposes `window.lab = { THREE, ed }`). Expected console noise, not errors: Phoenix's jsroot path note and three.js's `THREE.Clock` deprecation warning (from Phoenix 4.2.3). Full step list: Phases A–E in the build plan (kept outside this repo).
+Last done: B2 (`events/test/event001.xml` read with Phoenix's `JiveXMLLoader`; status shows 303 tracks, 16715 deposits, 5908 muon-chamber hits). Known: Phoenix skips FCAL cells; `MuonboyTrackParticles` has no positions (Phoenix logs an ERROR line for it); the 303 counts each muon in all 6 muon-track collections (291 inner-detector tracks). Expected console noise: Phoenix's jsroot path note and the `THREE.Clock` deprecation warning. Full step list: Phases A–E in the build plan (kept outside this repo).
 
 ## How it is built
 
@@ -30,7 +30,7 @@ Last done: B1 (Phoenix loads; `js/main.js` exposes `window.lab = { THREE, ed }`)
 
 ## Folder layout
 
-Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix; status list in the side panel shows progress and any error), `SPEC.md`.
+Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix; status list in the side panel shows progress and any error), `events/test/event001.xml` (one test event: dataset 8 group A, `Electron`/`Muon`/`Photon` blocks removed, `TILE` renamed `Tile`), `SPEC.md`.
 
 Planned (proposed, change if a step needs it):
 
