@@ -161,6 +161,10 @@ h2 {
 .btn:disabled { opacity: 0.45; cursor: default; }
 .counter { margin: 10px 0 4px; font-family: var(--mono); font-size: 15px; }
 
+.event-meta { margin: 0 0 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--mono); font-size: 13px; color: var(--text-mute); }
+.badge { font: 500 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--gold); color: var(--gold); }
+.badge.data { border-color: #5cc489; color: #5cc489; }
+
 /* ---------- status list ---------- */
 .status-head { margin-top: 20px; }
 .status {

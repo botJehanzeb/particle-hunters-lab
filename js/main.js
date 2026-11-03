@@ -60,7 +60,7 @@ status('Phoenix 4.2.3 started');
 // ---------- C3: events, loaded one at a time when shown ----------
 // events/50/index.json lists the browse set in order. Each event file is fetched only when it is shown;
 // its neighbours are fetched in the background so Previous / Next feel instant. Fetched files are kept.
-const EVENT_DIR = 'events/50/';
+const EVENT_DIR = new URLSearchParams(location.search).get('set') === 'balance' ? 'events/balance/' : 'events/50/';
 const indexRes = await fetch(`${EVENT_DIR}index.json`);
 if (!indexRes.ok) throw new Error(`Could not load ${EVENT_DIR}index.json (${indexRes.status})`);
 const EVENTS = (await indexRes.json()).events;
@@ -260,10 +260,18 @@ const prevBtn = document.getElementById('prev');
 const nextBtn = document.getElementById('next');
 const counter = document.getElementById('counter');
 const loadNote = document.getElementById('load-note');
+const badge = document.getElementById('badge');
+const eventDate = document.getElementById('event-date');
 
 async function showEvent(i) {
   const mine = ++request;
   counter.textContent = `Event ${i + 1}/${EVENTS.length}`;
+  // Data or simulation comes from index.json's flag, never from the run number (see SPEC, Data).
+  const info = EVENTS[i];
+  badge.textContent = info.data ? 'Real data' : 'Simulation';
+  badge.classList.toggle('data', info.data);
+  badge.title = info.data ? 'Recorded by the ATLAS detector' : 'Made by a computer simulation of ATLAS';
+  eventDate.textContent = info.data && info.date ? `Recorded ${info.date.split(' ')[0]}` : '';
   prevBtn.disabled = i === 0;
   nextBtn.disabled = i === EVENTS.length - 1;
   const t0 = performance.now();
