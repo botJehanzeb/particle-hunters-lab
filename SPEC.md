@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**B1 — load Phoenix:** load three.js as a module, set the global `THREE`, then load the Phoenix bundle (the README's old `three.min.js` no longer exists). *Done when:* Phoenix starts and the console shows no errors.
+**B2 — read one event:** load one event file with Phoenix's JiveXML loader and print how many tracks, deposits and muon hits it has. *Done when:* a status line shows the three counts.
 
-Last done: A3 (page skeleton). Full step list: Phases A–E in the build plan (kept outside this repo).
+Last done: B1 (Phoenix loads; `js/main.js` exposes `window.lab = { THREE, ed }`). Expected console noise, not errors: Phoenix's jsroot path note and three.js's `THREE.Clock` deprecation warning (from Phoenix 4.2.3). Full step list: Phases A–E in the build plan (kept outside this repo).
 
 ## How it is built
 
@@ -30,7 +30,7 @@ Last done: A3 (page skeleton). Full step list: Phases A–E in the build plan (k
 
 ## Folder layout
 
-Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `SPEC.md`.
+Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix; status list in the side panel shows progress and any error), `SPEC.md`.
 
 Planned (proposed, change if a step needs it):
 

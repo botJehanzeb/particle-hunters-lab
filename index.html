@@ -25,6 +25,8 @@
   <aside class="event-info" aria-label="Event information">
     <h2>Event</h2>
     <p class="placeholder">Event info</p>
+    <h2 class="status-head">Status</h2>
+    <ol class="status" id="status" aria-live="polite"></ol>
   </aside>
 
   <section class="objects" aria-label="Object table">
@@ -32,6 +34,36 @@
     <p class="placeholder">Object table</p>
   </section>
 </main>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.184.0/examples/jsm/"
+  }
+}
+</script>
+
+<script>
+  // Show any error in the status list, so it can be reported without opening developer tools.
+  (function () {
+    function add(msg) {
+      var li = document.createElement('li');
+      li.className = 'bad';
+      li.textContent = msg;
+      var list = document.getElementById('status');
+      if (list) list.appendChild(li);
+    }
+    window.addEventListener('error', function (e) {
+      add('Error: ' + (e.message || e.type) + (e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')' : ''));
+    }, true);
+    window.addEventListener('unhandledrejection', function (e) {
+      add('Error: ' + ((e.reason && e.reason.message) || e.reason));
+    });
+  })();
+</script>
+
+<script type="module" src="js/main.js"></script>
 
 </body>
 </html>

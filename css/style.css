@@ -103,6 +103,23 @@ h2 {
   .objects { height: 200px; overflow: auto; }
 }
 
+/* ---------- status list ---------- */
+.status-head { margin-top: 20px; }
+.status {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  font: 12px/1.45 var(--mono);
+  color: var(--text-mute);
+}
+.status li { display: grid; grid-template-columns: 10px 1fr; gap: 8px; align-items: baseline; overflow-wrap: anywhere; }
+.status li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #5cc489; }
+.status li.warn::before { background: var(--gold); }
+.status li.bad { color: #ef6a6a; }
+.status li.bad::before { background: #ef6a6a; }
+
 /* ---------- placeholders (A3 only) ---------- */
 .placeholder {
   margin: 0;
