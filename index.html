@@ -47,7 +47,12 @@
 
   <aside class="event-info" aria-label="Event information">
     <h2>Event</h2>
-    <p class="placeholder">Event info</p>
+    <div class="nav">
+      <button class="btn" id="prev" type="button" disabled>← Previous</button>
+      <button class="btn" id="next" type="button" disabled>Next →</button>
+    </div>
+    <p class="counter" id="counter" aria-live="polite">Event –/–</p>
+    <p class="placeholder" id="load-note"></p>
     <h2 class="status-head">Status</h2>
     <ol class="status" id="status" aria-live="polite"></ol>
   </aside>

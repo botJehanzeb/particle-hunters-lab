@@ -145,6 +145,22 @@ h2 {
 .sw.dash { height: 0; background: none; border-top: 2px dashed var(--c); }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
+/* ---------- event browser ---------- */
+.nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn {
+  font: 500 14px var(--mono);
+  color: var(--text);
+  background: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  min-height: 40px;
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) { border-color: var(--text-mute); }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.counter { margin: 10px 0 4px; font-family: var(--mono); font-size: 15px; }
+
 /* ---------- status list ---------- */
 .status-head { margin-top: 20px; }
 .status {

@@ -57,34 +57,38 @@ try { ed.getThreeManager().getRendererManager().getMainRenderer().setAnimationLo
 
 status('Phoenix 4.2.3 started');
 
-// ---------- B2: read one event with Phoenix's JiveXML loader ----------
-// Test event: dataset 8, group A, event001, slimmed by tools/slim_jivexml.py.
-const TEST_EVENT = 'events/50/event001.xml';
+// ---------- C3: events, loaded one at a time when shown ----------
+// events/50/index.json lists the browse set in order. Each event file is fetched only when it is shown;
+// its neighbours are fetched in the background so Previous / Next feel instant. Fetched files are kept.
+const EVENT_DIR = 'events/50/';
+const indexRes = await fetch(`${EVENT_DIR}index.json`);
+if (!indexRes.ok) throw new Error(`Could not load ${EVENT_DIR}index.json (${indexRes.status})`);
+const EVENTS = (await indexRes.json()).events;
+status(`${EVENTS.length} events listed; each loads when shown`);
 
-const countAll = (groups) =>
-  Object.values(groups || {}).reduce((n, list) => n + (Array.isArray(list) ? list.length : 0), 0);
-
-async function readEvent(url) {
+const fetched = new Map(); // file name -> Promise<string>
+function fetchText(i) {
+  const file = EVENTS[i].file;
+  if (!fetched.has(file)) {
+    fetched.set(file, fetch(EVENT_DIR + file).then((res) => {
+      if (!res.ok) throw new Error(`Could not load ${file} (${res.status})`);
+      return res.text();
+    }));
+    fetched.get(file).catch(() => fetched.delete(file)); // allow a retry after a failed fetch
+  }
+  return fetched.get(file);
+}
+function readEvent(text) {
   if (!window.JiveXMLLoader) throw new Error('Phoenix JiveXMLLoader is missing');
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Could not load ${url} (${res.status})`);
   const loader = new JiveXMLLoader();
-  loader.process(await res.text());
+  loader.process(text);
   return loader.getEventData();
 }
-
-const ev = await readEvent(TEST_EVENT);
-const nTracks = countAll(ev.Tracks);
-const nDeposits = countAll(ev.CaloCells) + countAll(ev.CaloClusters);
-const nHits = countAll(ev.Hits);
-status(`Event ${ev.eventNumber} (run ${ev.runNumber}): ${nTracks} tracks, ${nDeposits} energy deposits, ${nHits} muon-chamber hits`);
 
 // ---------- B3/B4: the event in two views ----------
 // End view: our detector, then Phoenix's event scene on top (barrel objects only, as in HYPATIA).
 // Side view: our ρ–z detector, then this page's own ρ–z drawing of the same objects.
 const phScene = ed.getThreeManager().getSceneManager().getScene();
-const prepared = prepareEvent(ev);
-ed.parsePhoenixEvents({ test: prepared.phoenix });
 
 // ρ–z: everything is drawn at its distance from the beam (ρ) against its position along the beam (z),
 // above the beam line if it is in the upper half of the detector (y ≥ 0), below it otherwise.
@@ -173,8 +177,15 @@ function buildRZ(e) {
   for (const obj of Object.values(layers)) scene.add(obj);
   return { scene, layers };
 }
-const rz = buildRZ(prepared.side);
-const rzScene = rz.scene;
+let rz = null; // the current event's side-view drawing
+function disposeRZ() {
+  if (!rz) return;
+  rz.scene.traverse((o) => {
+    if (o.geometry) o.geometry.dispose();
+    if (o.material) o.material.dispose();
+  });
+  rz = null;
+}
 
 // ---------- B4: layer switches (same names as Phoenix's collection groups) ----------
 const LAYER_SWITCHES = {
@@ -189,7 +200,7 @@ function applyVisibility() {
   for (const [id, group] of Object.entries(LAYER_SWITCHES)) {
     const on = document.getElementById(id).checked;
     if (eventData) for (const child of eventData.children) if (child.name === group) child.visible = on;
-    if (rz.layers[group]) rz.layers[group].visible = on;
+    if (rz && rz.layers[group]) rz.layers[group].visible = on;
   }
   requestRender();
 }
@@ -228,7 +239,7 @@ function renderView(v) {
   const r = v.renderer;
   r.clear();
   r.render(v.detScene, v.camera);
-  if (v.kind === 'side') { r.render(rzScene, v.camera); return; }
+  if (v.kind === 'side') { if (rz) r.render(rz.scene, v.camera); return; }
   const bg = phScene.background;
   phScene.background = null;
   r.render(phScene, v.camera);
@@ -241,9 +252,46 @@ function requestRender() {
   pending = true;
   requestAnimationFrame(() => { pending = false; renderView(views.end); renderView(views.side); });
 }
-applyVisibility();
-setTimeout(requestRender, 500);
 status('Detector drawn in both views');
 
+// ---------- showing an event ----------
+let current = -1, request = 0;
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const counter = document.getElementById('counter');
+const loadNote = document.getElementById('load-note');
+
+async function showEvent(i) {
+  const mine = ++request;
+  counter.textContent = `Event ${i + 1}/${EVENTS.length}`;
+  prevBtn.disabled = i === 0;
+  nextBtn.disabled = i === EVENTS.length - 1;
+  const t0 = performance.now();
+  let text;
+  try {
+    text = await fetchText(i);
+  } catch (err) {
+    if (mine === request) loadNote.textContent = `Could not load this event. ${err.message}`;
+    return;
+  }
+  if (mine !== request) return; // the student has already moved on
+  const prepared = prepareEvent(readEvent(text));
+  ed.parsePhoenixEvents({ [EVENTS[i].file]: prepared.phoenix });
+  try { ed.getThreeManager().getRendererManager().getMainRenderer().setAnimationLoop(null); } catch (e) { /* keep Phoenix's hidden loop */ }
+  disposeRZ();
+  rz = buildRZ(prepared.side);
+  applyVisibility();
+  current = i;
+  loadNote.textContent = `Shown in ${Math.round(performance.now() - t0)} ms`;
+  window.lab.prepared = prepared;
+  // Fetch the neighbours in the background.
+  for (const j of [i + 1, i - 1]) if (j >= 0 && j < EVENTS.length) fetchText(j).catch(() => {});
+}
+prevBtn.addEventListener('click', () => { if (current > 0) showEvent(current - 1); });
+nextBtn.addEventListener('click', () => { if (current < EVENTS.length - 1) showEvent(current + 1); });
+
 // Shared with later steps.
-window.lab = { THREE, ed, readEvent, ev, prepared, views, rz, requestRender, applyVisibility };
+window.lab = { THREE, ed, EVENTS, fetched, showEvent, views, get rz() { return rz; }, requestRender, applyVisibility };
+
+await showEvent(0);
+setTimeout(requestRender, 500);

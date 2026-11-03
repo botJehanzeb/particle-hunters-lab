@@ -1,0 +1,405 @@
+{
+ "about": "Browse set for Stage 1: 50 real 2012 events from ATLAS ZPath 2015 Masterclass dataset 8 (CERN Open Data record 360), slimmed by tools/slim_jivexml.py. Group A's 5 simulated events were replaced by the first 5 real events of group B.",
+ "events": [
+  {
+   "file": "A-event001.xml",
+   "source": "dataset 8, group A, event001.xml",
+   "run": 206497,
+   "event": 4698990,
+   "date": "2012-07-06 03:50:22 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event002.xml",
+   "source": "dataset 8, group A, event002.xml",
+   "run": 204857,
+   "event": 7284616,
+   "date": "2012-06-11 18:28:02 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event003.xml",
+   "source": "dataset 8, group A, event003.xml",
+   "run": 205017,
+   "event": 76349177,
+   "date": "2012-06-15 14:28:25 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event004.xml",
+   "source": "dataset 8, group A, event004.xml",
+   "run": 205016,
+   "event": 42769084,
+   "date": "2012-06-15 03:38:37 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event005.xml",
+   "source": "dataset 8, group A, event005.xml",
+   "run": 205016,
+   "event": 36628696,
+   "date": "2012-06-15 03:14:07 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event006.xml",
+   "source": "dataset 8, group A, event006.xml",
+   "run": 206497,
+   "event": 4708152,
+   "date": "2012-07-06 03:50:25 CEST",
+   "data": true
+  },
+  {
+   "file": "B-event001.xml",
+   "source": "dataset 8, group B, event001.xml",
+   "run": 204857,
+   "event": 8350643,
+   "date": "2012-06-11 18:31:39 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event008.xml",
+   "source": "dataset 8, group A, event008.xml",
+   "run": 204796,
+   "event": 6685458,
+   "date": "2012-06-11 04:30:05 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event009.xml",
+   "source": "dataset 8, group A, event009.xml",
+   "run": 204857,
+   "event": 7336616,
+   "date": "2012-06-11 18:28:13 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event010.xml",
+   "source": "dataset 8, group A, event010.xml",
+   "run": 204857,
+   "event": 11086824,
+   "date": "2012-06-11 18:40:36 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event011.xml",
+   "source": "dataset 8, group A, event011.xml",
+   "run": 205016,
+   "event": 36711249,
+   "date": "2012-06-15 03:14:26 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event012.xml",
+   "source": "dataset 8, group A, event012.xml",
+   "run": 204857,
+   "event": 11780697,
+   "date": "2012-06-11 18:42:57 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event013.xml",
+   "source": "dataset 8, group A, event013.xml",
+   "run": 206497,
+   "event": 4710980,
+   "date": "2012-07-06 03:50:25 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event014.xml",
+   "source": "dataset 8, group A, event014.xml",
+   "run": 204796,
+   "event": 6690007,
+   "date": "2012-06-11 04:30:06 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event015.xml",
+   "source": "dataset 8, group A, event015.xml",
+   "run": 204796,
+   "event": 6713059,
+   "date": "2012-06-11 04:30:11 CEST",
+   "data": true
+  },
+  {
+   "file": "B-event002.xml",
+   "source": "dataset 8, group B, event002.xml",
+   "run": 205016,
+   "event": 34190102,
+   "date": "2012-06-15 03:04:55 UTC",
+   "data": true
+  },
+  {
+   "file": "B-event003.xml",
+   "source": "dataset 8, group B, event003.xml",
+   "run": 206497,
+   "event": 4740343,
+   "date": "2012-07-06 03:50:32 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event018.xml",
+   "source": "dataset 8, group A, event018.xml",
+   "run": 205016,
+   "event": 37038555,
+   "date": "2012-06-15 03:15:42 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event019.xml",
+   "source": "dataset 8, group A, event019.xml",
+   "run": 205016,
+   "event": 37329870,
+   "date": "2012-06-15 03:16:50 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event020.xml",
+   "source": "dataset 8, group A, event020.xml",
+   "run": 204796,
+   "event": 6715744,
+   "date": "2012-06-11 04:30:11 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event021.xml",
+   "source": "dataset 8, group A, event021.xml",
+   "run": 206497,
+   "event": 4712694,
+   "date": "2012-07-06 03:50:25 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event022.xml",
+   "source": "dataset 8, group A, event022.xml",
+   "run": 204796,
+   "event": 6718331,
+   "date": "2012-06-11 04:30:12 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event023.xml",
+   "source": "dataset 8, group A, event023.xml",
+   "run": 206497,
+   "event": 4713867,
+   "date": "2012-07-06 03:50:26 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event024.xml",
+   "source": "dataset 8, group A, event024.xml",
+   "run": 206497,
+   "event": 4718295,
+   "date": "2012-07-06 03:50:26 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event025.xml",
+   "source": "dataset 8, group A, event025.xml",
+   "run": 204857,
+   "event": 11859290,
+   "date": "2012-06-11 18:43:13 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event026.xml",
+   "source": "dataset 8, group A, event026.xml",
+   "run": 204796,
+   "event": 6741440,
+   "date": "2012-06-11 04:30:16 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event027.xml",
+   "source": "dataset 8, group A, event027.xml",
+   "run": 204769,
+   "event": 38987331,
+   "date": "2012-06-10 09:09:00 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event028.xml",
+   "source": "dataset 8, group A, event028.xml",
+   "run": 205055,
+   "event": 55740592,
+   "date": "2012-06-16 00:10:33 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event029.xml",
+   "source": "dataset 8, group A, event029.xml",
+   "run": 204857,
+   "event": 12163457,
+   "date": "2012-06-11 18:44:16 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event030.xml",
+   "source": "dataset 8, group A, event030.xml",
+   "run": 204796,
+   "event": 6782945,
+   "date": "2012-06-11 04:30:24 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event031.xml",
+   "source": "dataset 8, group A, event031.xml",
+   "run": 205016,
+   "event": 43263308,
+   "date": "2012-06-15 03:40:38 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event032.xml",
+   "source": "dataset 8, group A, event032.xml",
+   "run": 206497,
+   "event": 4719998,
+   "date": "2012-07-06 03:50:27 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event033.xml",
+   "source": "dataset 8, group A, event033.xml",
+   "run": 204796,
+   "event": 6784460,
+   "date": "2012-06-11 04:30:25 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event034.xml",
+   "source": "dataset 8, group A, event034.xml",
+   "run": 204857,
+   "event": 12412373,
+   "date": "2012-06-11 18:45:06 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event035.xml",
+   "source": "dataset 8, group A, event035.xml",
+   "run": 204857,
+   "event": 7936399,
+   "date": "2012-06-11 18:30:14 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event036.xml",
+   "source": "dataset 8, group A, event036.xml",
+   "run": 206497,
+   "event": 4723063,
+   "date": "2012-07-06 03:50:28 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event037.xml",
+   "source": "dataset 8, group A, event037.xml",
+   "run": 205010,
+   "event": 7497850,
+   "date": "2012-06-14 18:53:09 UTC",
+   "data": true
+  },
+  {
+   "file": "B-event004.xml",
+   "source": "dataset 8, group B, event004.xml",
+   "run": 205016,
+   "event": 35149544,
+   "date": "2012-06-15 03:08:37 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event039.xml",
+   "source": "dataset 8, group A, event039.xml",
+   "run": 205010,
+   "event": 7548770,
+   "date": "2012-06-14 18:53:19 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event040.xml",
+   "source": "dataset 8, group A, event040.xml",
+   "run": 204796,
+   "event": 6787298,
+   "date": "2012-06-11 04:30:25 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event041.xml",
+   "source": "dataset 8, group A, event041.xml",
+   "run": 204796,
+   "event": 6788466,
+   "date": "2012-06-11 04:30:25 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event042.xml",
+   "source": "dataset 8, group A, event042.xml",
+   "run": 206497,
+   "event": 4733825,
+   "date": "2012-07-06 03:50:30 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event043.xml",
+   "source": "dataset 8, group A, event043.xml",
+   "run": 205017,
+   "event": 76383409,
+   "date": "2012-06-15 14:28:34 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event044.xml",
+   "source": "dataset 8, group A, event044.xml",
+   "run": 205016,
+   "event": 44059982,
+   "date": "2012-06-15 03:43:35 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event045.xml",
+   "source": "dataset 8, group A, event045.xml",
+   "run": 205016,
+   "event": 44099251,
+   "date": "2012-06-15 03:43:44 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event046.xml",
+   "source": "dataset 8, group A, event046.xml",
+   "run": 204857,
+   "event": 8118462,
+   "date": "2012-06-11 18:30:51 UTC",
+   "data": true
+  },
+  {
+   "file": "B-event005.xml",
+   "source": "dataset 8, group B, event005.xml",
+   "run": 206497,
+   "event": 4740775,
+   "date": "2012-07-06 03:50:32 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event048.xml",
+   "source": "dataset 8, group A, event048.xml",
+   "run": 205016,
+   "event": 45416626,
+   "date": "2012-06-15 03:49:10 UTC",
+   "data": true
+  },
+  {
+   "file": "A-event049.xml",
+   "source": "dataset 8, group A, event049.xml",
+   "run": 206497,
+   "event": 4736968,
+   "date": "2012-07-06 03:50:31 CEST",
+   "data": true
+  },
+  {
+   "file": "A-event050.xml",
+   "source": "dataset 8, group A, event050.xml",
+   "run": 206497,
+   "event": 4737272,
+   "date": "2012-07-06 03:50:31 CEST",
+   "data": true
+  }
+ ]
+}

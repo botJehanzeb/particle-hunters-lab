@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**C3 — load on demand:** load events one at a time when they are shown, not all 50 at the start. *Done when:* moving to the next event stays quick on a phone.
+**C4 — balance set:** a script scans dataset 8's other groups for events with two leptons back to back in the end view but both heading the same way along the beam, plus a few with large missing energy; choose about 7 and slim them. *Done when:* in every chosen event the end view clearly balances (counting the missing energy) and the side view clearly doesn't.
 
-Last done: C2. `tools/slim_jivexml.py` wrote `events/50/` (50 files, 45–713 KB, 25 MB total; all load in Phoenix with no loader errors). Muon tracks: one collection `LongTracks` = combined-fit muon tracks + unmatched ConvertedStaco tracks; each replaces its matching inner track (ΔR < 0.05, same charge), keeps `<hits>` for on-track marking (D6). Dropped: particle labels, trigger info, truth tracks (STr), segments, vertices, FCAL, other jet/MET collections; the script refuses to write a file containing Muon/Electron/Photon. **Group A is not all real data:** events 007, 016, 017, 038, 047 are simulated (run 110158026 or 100001, lumiBlock 0, no date); the other 45 are real, run 206497, 2012-07-06. The header badge (D2) must show Simulation for these, and their run number is a dataset ID, not a run. C1: 50 files, all load. Before that, B4. Layer switches (tracks, energy deposits, muon-chamber hits, jets off by default, missing energy) and a colour key under the views; each switch works in both views (tested). `js/prepare.js` turns Phoenix's event data into the two views: barrel-only objects for Phoenix (end view), everything for the side view; one jet collection (`AntiKt4LCTopoJets`), one missing-energy collection (`MET_RefFinal`); particle labels never passed on; cells below 0.5 GeV dropped (same as C2). Phase B is complete (B5 was decided earlier). Open: deposits are drawn thin (6 cm wide, from the test page) and hard to see. Full step list: Phases A–E in the build plan (kept outside this repo).
+Last done: C3. `events/50/index.json` lists the browse set in order (file, source, run, event, date, data flag; no answers). The page fetches an event only when shown, keeps fetched files, prefetches the neighbours, and shows "Shown in N ms" (remove in polish). Plain Previous / Next and "Event i/50" are in the event panel; D1 adds the dropdown. Before that, C2: `tools/slim_jivexml.py`; muons are one `LongTracks` collection (combined-fit + unmatched ConvertedStaco tracks, each replacing its matching inner track, `<hits>` kept for D6); labels, trigger info, truth tracks, segments, vertices, FCAL and extra jet/MET collections dropped; the script refuses to write Muon/Electron/Photon. **The browse set is 50 real events:** group A's 5 simulated events (007, 016, 017, 038, 047: run 110158026 / 100001, no date) were replaced by real group B events 001–005, in the same slots. Files are named by source (`A-event001.xml`, `B-event001.xml`). The 50 come from 8 runs, 10 June – 6 July 2012. The masterclass groups mix in simulated events on purpose (group B: 6 of 50), so check the data flag whenever events are picked (C4). C1: 50 files, all load. Before that, B4. Layer switches (tracks, energy deposits, muon-chamber hits, jets off by default, missing energy) and a colour key under the views; each switch works in both views (tested). `js/prepare.js` turns Phoenix's event data into the two views: barrel-only objects for Phoenix (end view), everything for the side view; one jet collection (`AntiKt4LCTopoJets`), one missing-energy collection (`MET_RefFinal`); particle labels never passed on; cells below 0.5 GeV dropped (same as C2). Phase B is complete (B5 was decided earlier). Open: deposits are drawn thin (6 cm wide, from the test page) and hard to see. Full step list: Phases A–E in the build plan (kept outside this repo).
 
 ## How it is built
 
@@ -30,14 +30,14 @@ Last done: C2. `tools/slim_jivexml.py` wrote `events/50/` (50 files, 45–713 KB
 
 ## Folder layout
 
-Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix, reads the test event, renders both views; status list shows progress and any error), `js/detector.js` (simplified detector and muon-chamber geometry), `js/prepare.js` (event data → what each view draws), `events/50/` (50 slimmed events; the page loads event001 for now), `tools/slim_jivexml.py` (slimming), `SPEC.md`.
+Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix, reads the test event, renders both views; status list shows progress and any error), `js/detector.js` (simplified detector and muon-chamber geometry), `js/prepare.js` (event data → what each view draws), `events/50/` (50 slimmed real events + `index.json`, the browse order), `tools/slim_jivexml.py` (slimming), `SPEC.md`.
 
 Planned (proposed, change if a step needs it):
 
 ```
 index.html        the page
 css/  js/         styles and scripts, plain files
-events/50/        slimmed JiveXML, package A (now in the repo)
+events/50/        slimmed JiveXML (group A + 5 real group B events) and index.json
 events/balance/   the ~7 momentum-question events
 answers.json      our labels per event — never loaded into what students see
 tools/            Python helpers (slim_jivexml.py, balance-set picker); not used by the page
