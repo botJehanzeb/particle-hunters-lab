@@ -58,8 +58,8 @@ try { ed.getThreeManager().getRendererManager().getMainRenderer().setAnimationLo
 status('Phoenix 4.2.3 started');
 
 // ---------- B2: read one event with Phoenix's JiveXML loader ----------
-// Test event: dataset 8, group A, event001, with particle labels removed and <TILE> renamed <Tile>.
-const TEST_EVENT = 'events/test/event001.xml';
+// Test event: dataset 8, group A, event001, slimmed by tools/slim_jivexml.py.
+const TEST_EVENT = 'events/50/event001.xml';
 
 const countAll = (groups) =>
   Object.values(groups || {}).reduce((n, list) => n + (Array.isArray(list) ? list.length : 0), 0);

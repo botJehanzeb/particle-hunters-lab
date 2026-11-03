@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**C2 — slim events:** `tools/slim_jivexml.py`: drop raw inner-detector hits; keep tracks, calorimeter cells above 0.5 GeV, muon-chamber hits (with their `identifier`), clusters, jets and missing energy; remove `Electron`/`Muon`/`Photon`; rename `<TILE>` to `<Tile>`. *Done when:* each event is under 1 MB.
+**C3 — load on demand:** load events one at a time when they are shown, not all 50 at the start. *Done when:* moving to the next event stays quick on a phone.
 
-Last done: C1 (group A: 50 files, all load in Phoenix's JiveXML loader with tracks, hits and cells; all from run 206497, 2012-07-06). Before that, B4. Layer switches (tracks, energy deposits, muon-chamber hits, jets off by default, missing energy) and a colour key under the views; each switch works in both views (tested). `js/prepare.js` turns Phoenix's event data into the two views: barrel-only objects for Phoenix (end view), everything for the side view; one jet collection (`AntiKt4LCTopoJets`), one missing-energy collection (`MET_RefFinal`); particle labels never passed on; cells below 0.5 GeV dropped (same as C2). Phase B is complete (B5 was decided earlier). Open: deposits are drawn thin (6 cm wide, from the test page) and hard to see. Full step list: Phases A–E in the build plan (kept outside this repo).
+Last done: C2. `tools/slim_jivexml.py` wrote `events/50/` (50 files, 45–713 KB, 25 MB total; all load in Phoenix with no loader errors). Muon tracks: one collection `LongTracks` = combined-fit muon tracks + unmatched ConvertedStaco tracks; each replaces its matching inner track (ΔR < 0.05, same charge), keeps `<hits>` for on-track marking (D6). Dropped: particle labels, trigger info, truth tracks (STr), segments, vertices, FCAL, other jet/MET collections; the script refuses to write a file containing Muon/Electron/Photon. **Group A is not all real data:** events 007, 016, 017, 038, 047 are simulated (run 110158026 or 100001, lumiBlock 0, no date); the other 45 are real, run 206497, 2012-07-06. The header badge (D2) must show Simulation for these, and their run number is a dataset ID, not a run. C1: 50 files, all load. Before that, B4. Layer switches (tracks, energy deposits, muon-chamber hits, jets off by default, missing energy) and a colour key under the views; each switch works in both views (tested). `js/prepare.js` turns Phoenix's event data into the two views: barrel-only objects for Phoenix (end view), everything for the side view; one jet collection (`AntiKt4LCTopoJets`), one missing-energy collection (`MET_RefFinal`); particle labels never passed on; cells below 0.5 GeV dropped (same as C2). Phase B is complete (B5 was decided earlier). Open: deposits are drawn thin (6 cm wide, from the test page) and hard to see. Full step list: Phases A–E in the build plan (kept outside this repo).
 
 ## How it is built
 
@@ -30,14 +30,14 @@ Last done: C1 (group A: 50 files, all load in Phoenix's JiveXML loader with trac
 
 ## Folder layout
 
-Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix, reads the test event, renders both views; status list shows progress and any error), `js/detector.js` (simplified detector and muon-chamber geometry), `js/prepare.js` (event data → what each view draws), `events/test/event001.xml` (one test event: dataset 8 group A, `Electron`/`Muon`/`Photon` blocks removed, `TILE` renamed `Tile`), `SPEC.md`.
+Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix, reads the test event, renders both views; status list shows progress and any error), `js/detector.js` (simplified detector and muon-chamber geometry), `js/prepare.js` (event data → what each view draws), `events/50/` (50 slimmed events; the page loads event001 for now), `tools/slim_jivexml.py` (slimming), `SPEC.md`.
 
 Planned (proposed, change if a step needs it):
 
 ```
 index.html        the page
 css/  js/         styles and scripts, plain files
-events/50/        slimmed JiveXML, package A
+events/50/        slimmed JiveXML, package A (now in the repo)
 events/balance/   the ~7 momentum-question events
 answers.json      our labels per event — never loaded into what students see
 tools/            Python helpers (slim_jivexml.py, balance-set picker); not used by the page
