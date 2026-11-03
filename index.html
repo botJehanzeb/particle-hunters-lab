@@ -18,8 +18,15 @@
 </header>
 
 <main class="lab">
-  <section class="display" aria-label="3D detector display">
-    <p class="placeholder">3D display</p>
+  <section class="display" aria-label="Detector views">
+    <figure class="view">
+      <figcaption>End view <span>looking down the beam</span></figcaption>
+      <div class="stage" id="stage-end"><canvas></canvas></div>
+    </figure>
+    <figure class="view">
+      <figcaption>Side view <span>ρ–z, barrel and end-caps</span></figcaption>
+      <div class="stage" id="stage-side"><canvas></canvas></div>
+    </figure>
   </section>
 
   <aside class="event-info" aria-label="Event information">

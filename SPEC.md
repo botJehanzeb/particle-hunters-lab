@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**B3 — detector drawing:** draw our own simplified detector: rings for the inner detector and calorimeters, 16 flat muon sectors per layer at the real radii, and sections for the side view. *Done when:* in a real event, the muon hits fall inside the blue chambers.
+**B4 — colour key and layer switches:** tracks, energy deposits, muon hits, jets (off by default), missing energy. *Done when:* each switch hides and shows its layer in both views.
 
-Last done: B2 (`events/test/event001.xml` read with Phoenix's `JiveXMLLoader`; status shows 303 tracks, 16715 deposits, 5908 muon-chamber hits). Known: Phoenix skips FCAL cells; `MuonboyTrackParticles` has no positions (Phoenix logs an ERROR line for it); the 303 counts each muon in all 6 muon-track collections (291 inner-detector tracks). Expected console noise: Phoenix's jsroot path note and the `THREE.Clock` deprecation warning. Full step list: Phases A–E in the build plan (kept outside this repo).
+Last done: B3. Two views in the 3D area (side by side on a laptop, stacked on a phone). `js/detector.js` holds the geometry: chamber bands were measured from the hits of all 50 group A events (side view: 100% of 272,537 hits inside; end view: 100% of barrel hit centres, 99.99% of segments). Barrel vs end-cap is read from the hit's `identifier` station name (B = barrel; BEE counts as end-cap), so slimming (C2) must keep `identifier`. In the end view a barrel hit is drawn across its chamber at the hit's distance from the beam, not as Phoenix's tube-length line. Deposits are not drawn yet. Full step list: Phases A–E in the build plan (kept outside this repo).
 
 ## How it is built
 
@@ -30,7 +30,7 @@ Last done: B2 (`events/test/event001.xml` read with Phoenix's `JiveXMLLoader`; s
 
 ## Folder layout
 
-Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix; status list in the side panel shows progress and any error), `events/test/event001.xml` (one test event: dataset 8 group A, `Electron`/`Muon`/`Photon` blocks removed, `TILE` renamed `Tile`), `SPEC.md`.
+Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix, reads the test event, renders both views; status list shows progress and any error), `js/detector.js` (simplified detector and muon-chamber geometry), `events/test/event001.xml` (one test event: dataset 8 group A, `Electron`/`Muon`/`Photon` blocks removed, `TILE` renamed `Tile`), `SPEC.md`.
 
 Planned (proposed, change if a step needs it):
 

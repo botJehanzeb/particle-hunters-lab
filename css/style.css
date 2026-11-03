@@ -81,13 +81,33 @@ h2 {
 }
 
 .display {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 70vh;
-  min-height: 320px;
-  background: #000;      /* event displays sit on black */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap);
+  padding: 0;
+  border: 0;
+  background: none;
 }
+.view {
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: #000;      /* event displays sit on black */
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.view figcaption {
+  padding: 6px 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+  border-bottom: 1px solid var(--line);
+  background: var(--ink-2);
+}
+.view figcaption span { color: var(--text-mute); margin-left: 6px; }
+.stage { position: relative; height: clamp(280px, 80vw, 480px); }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .objects { min-height: 160px; }
 
@@ -99,7 +119,8 @@ h2 {
       "display info"
       "objects objects";
   }
-  .display { height: calc(100vh - 290px); min-height: 420px; }
+  .display { grid-template-columns: 1fr 1fr; }
+  .stage { height: max(380px, calc(100vh - 330px)); }
   .objects { height: 200px; overflow: auto; }
 }
 
@@ -127,4 +148,3 @@ h2 {
   font-size: 14px;
   color: var(--text-mute);
 }
-.display .placeholder { color: var(--blue); }
