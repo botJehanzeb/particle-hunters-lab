@@ -2,7 +2,8 @@
 // B1: load three.js, make it the global THREE, then load and start Phoenix.
 // Phoenix's bundle expects THREE as a global, so the order matters.
 import * as THREE from 'three';
-import { COLORS, buildEndDetector, buildSideDetector, muonHitIsEndcap, barrelSegmentInSector } from './detector.js';
+import { COLORS, buildEndDetector, buildSideDetector } from './detector.js';
+import { prepareEvent, etaToTheta } from './prepare.js';
 
 const PHOENIX_URL = 'https://cdn.jsdelivr.net/npm/phoenix-event-display@4.2.3/dist/bundle/phoenix.min.js';
 
@@ -78,43 +79,121 @@ const nDeposits = countAll(ev.CaloCells) + countAll(ev.CaloClusters);
 const nHits = countAll(ev.Hits);
 status(`Event ${ev.eventNumber} (run ${ev.runNumber}): ${nTracks} tracks, ${nDeposits} energy deposits, ${nHits} muon-chamber hits`);
 
-// ---------- B3: detector drawing in two views ----------
-// End view: our detector, then Phoenix's event scene on top (tracks and barrel muon hits).
-// Side view: our ρ–z detector, then every muon hit as a dot at (ρ, z). Deposits and switches come in B4.
+// ---------- B3/B4: the event in two views ----------
+// End view: our detector, then Phoenix's event scene on top (barrel objects only, as in HYPATIA).
+// Side view: our ρ–z detector, then this page's own ρ–z drawing of the same objects.
 const phScene = ed.getThreeManager().getSceneManager().getScene();
+const prepared = prepareEvent(ev);
+ed.parsePhoenixEvents({ test: prepared.phoenix });
 
-function eventForPhoenix(raw) {
-  const out = {
-    eventNumber: raw.eventNumber, runNumber: raw.runNumber,
-    Tracks: {}, Hits: {},
-  };
-  for (const [name, list] of Object.entries(raw.Tracks || {})) {
-    out.Tracks[name] = list.map((t) => ({ ...t, color: COLORS.track, linewidth: 2 }));
-  }
-  for (const [name, list] of Object.entries(raw.Hits || {})) {
-    const barrel = list.filter((h) => h && typeof h === 'object' && !Array.isArray(h) && !muonHitIsEndcap(h, name));
-    if (barrel.length) out.Hits[name] = barrel.map((h) => ({ ...h, pos: barrelSegmentInSector(h) || h.pos, color: COLORS.hit }));
-  }
-  return out;
+// ρ–z: everything is drawn at its distance from the beam (ρ) against its position along the beam (z),
+// above the beam line if it is in the upper half of the detector (y ≥ 0), below it otherwise.
+const half = (y) => (y >= 0 ? 1 : -1);
+function caloCenter(c) {
+  const th = etaToTheta(c.eta);
+  const ux = Math.sin(th) * Math.cos(c.phi), uy = Math.sin(th) * Math.sin(c.phi), uz = Math.cos(th);
+  const k = c.radius ? c.radius : c.z / uz;
+  return [ux * k, uy * k, uz * k];
 }
-ed.parsePhoenixEvents({ test: eventForPhoenix(ev) });
+function buildRZ(e) {
+  const layers = {};
 
-// Side-view hits: a drift tube runs around the beam, so in ρ–z it shrinks to a dot. Upper half above the beam line.
-const rzScene = new THREE.Scene();
-{
-  const pts = [];
-  for (const list of Object.values(ev.Hits || {})) {
+  const tracks = new THREE.Group();
+  const trackMat = new THREE.LineBasicMaterial({ color: COLORS.track });
+  for (const list of Object.values(e.Tracks || {})) {
+    for (const t of list) {
+      if (!Array.isArray(t.pos) || t.pos.length < 2) continue;   // e.g. MuonboyTrackParticles: no positions
+      const s = half(t.pos[t.pos.length - 1][1]);
+      const pts = t.pos.map((p) => new THREE.Vector3(0, s * Math.hypot(p[0], p[1]), p[2]));
+      tracks.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), trackMat));
+    }
+  }
+  layers.Tracks = tracks;
+
+  const cells = Object.values(e.CaloCells || {}).flat();
+  const deposits = new THREE.Group();
+  if (cells.length) {
+    const geo = new THREE.PlaneGeometry(1, 1);
+    geo.rotateY(-Math.PI / 2); // lies in the ρ–z plane: height = ρ direction, width = z direction
+    const mesh = new THREE.InstancedMesh(geo, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, depthWrite: false }), cells.length);
+    const m = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), pos = new THREE.Vector3(), col = new THREE.Color();
+    cells.forEach((c, i) => {
+      const [x, y, z] = caloCenter(c);
+      pos.set(0, half(y) * Math.hypot(x, y), z);
+      if (c.radius) sc.set(1, c.length, c.side); else sc.set(1, c.side, c.length);
+      m.compose(pos, q, sc);
+      mesh.setMatrixAt(i, m);
+      mesh.setColorAt(i, col.set(c.color));
+    });
+    deposits.add(mesh);
+  }
+  layers.CaloCells = deposits;
+
+  // A drift tube runs around the beam, so in ρ–z it shrinks to a dot.
+  const hitPts = [];
+  for (const list of Object.values(e.Hits || {})) {
     for (const h of list) {
-      const p = h && Array.isArray(h.pos) ? h.pos.flat() : null;
+      const p = Array.isArray(h.pos) ? h.pos.flat() : null;
       if (!p || p.length < 3) continue;
       const two = p.length >= 6;
       const x = two ? (p[0] + p[3]) / 2 : p[0], y = two ? (p[1] + p[4]) / 2 : p[1], z = two ? (p[2] + p[5]) / 2 : p[2];
-      pts.push(new THREE.Vector3(0, (y >= 0 ? 1 : -1) * Math.hypot(x, y), z));
+      hitPts.push(new THREE.Vector3(0, half(y) * Math.hypot(x, y), z));
     }
   }
-  rzScene.add(new THREE.Points(new THREE.BufferGeometry().setFromPoints(pts),
-    new THREE.PointsMaterial({ color: COLORS.hit, size: 3, sizeAttenuation: false })));
+  layers.Hits = new THREE.Points(new THREE.BufferGeometry().setFromPoints(hitPts),
+    new THREE.PointsMaterial({ color: COLORS.hit, size: 3, sizeAttenuation: false }));
+
+  const jets = new THREE.Group();
+  const jetMat = new THREE.MeshBasicMaterial({ color: COLORS.jet, transparent: true, opacity: 0.35, side: THREE.DoubleSide, depthWrite: false });
+  for (const list of Object.values(e.Jets || {})) {
+    for (const j of list) {
+      const th = j.theta ?? etaToTheta(j.eta);
+      const s = Math.sin(j.phi) >= 0 ? 1 : -1, L = 4000, a = 0.2;
+      jets.add(new THREE.Mesh(new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0, s * L * Math.sin(th - a), L * Math.cos(th - a)),
+        new THREE.Vector3(0, s * L * Math.sin(th + a), L * Math.cos(th + a))]), jetMat));
+    }
+  }
+  layers.Jets = jets;
+
+  // Missing energy lies across the beam, so in ρ–z it points straight up or down.
+  const met = new THREE.Group();
+  const m0 = e.MissingEnergy && e.MissingEnergy.MET && e.MissingEnergy.MET[0];
+  if (m0) {
+    const line = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, half(m0.ety) * 10500, 0)]),
+      new THREE.LineDashedMaterial({ color: COLORS.met, dashSize: 250, gapSize: 180 }));
+    line.computeLineDistances();
+    met.add(line);
+  }
+  layers.MissingEnergy = met;
+
+  const scene = new THREE.Scene();
+  for (const obj of Object.values(layers)) scene.add(obj);
+  return { scene, layers };
 }
+const rz = buildRZ(prepared.side);
+const rzScene = rz.scene;
+
+// ---------- B4: layer switches (same names as Phoenix's collection groups) ----------
+const LAYER_SWITCHES = {
+  'show-tracks': 'Tracks',
+  'show-deposits': 'CaloCells',
+  'show-hits': 'Hits',
+  'show-jets': 'Jets',
+  'show-met': 'MissingEnergy',
+};
+function applyVisibility() {
+  const eventData = phScene.getObjectByName('EventData');
+  for (const [id, group] of Object.entries(LAYER_SWITCHES)) {
+    const on = document.getElementById(id).checked;
+    if (eventData) for (const child of eventData.children) if (child.name === group) child.visible = on;
+    if (rz.layers[group]) rz.layers[group].visible = on;
+  }
+  requestRender();
+}
+for (const id of Object.keys(LAYER_SWITCHES)) document.getElementById(id).addEventListener('change', applyVisibility);
 
 function makeView(kind, detScene) {
   const stage = document.getElementById(`stage-${kind}`);
@@ -162,9 +241,9 @@ function requestRender() {
   pending = true;
   requestAnimationFrame(() => { pending = false; renderView(views.end); renderView(views.side); });
 }
-requestRender();
+applyVisibility();
 setTimeout(requestRender, 500);
 status('Detector drawn in both views');
 
 // Shared with later steps.
-window.lab = { THREE, ed, readEvent, ev, views, requestRender };
+window.lab = { THREE, ed, readEvent, ev, prepared, views, rz, requestRender, applyVisibility };

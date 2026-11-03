@@ -27,6 +27,22 @@
       <figcaption>Side view <span>ρ–z, barrel and end-caps</span></figcaption>
       <div class="stage" id="stage-side"><canvas></canvas></div>
     </figure>
+
+    <div class="layers" role="group" aria-label="Show or hide parts of the event">
+      <span class="lbl">Show</span>
+      <label class="switch"><input type="checkbox" id="show-tracks" checked><i class="sw line" style="--c:#dfe5ea"></i>Tracks</label>
+      <label class="switch"><input type="checkbox" id="show-deposits" checked><i class="sw" style="--c:#ffd84d"></i>Energy deposits</label>
+      <label class="switch"><input type="checkbox" id="show-hits" checked><i class="sw" style="--c:#ff5a5a"></i>Muon-chamber hits</label>
+      <label class="switch"><input type="checkbox" id="show-jets"><i class="sw" style="--c:#3f7fd0"></i>Jets</label>
+      <label class="switch"><input type="checkbox" id="show-met" checked><i class="sw dash" style="--c:#ff6b6b"></i>Missing energy</label>
+    </div>
+
+    <div class="legend" aria-label="Colour key: detector parts">
+      <span><i class="sw" style="--c:#2b3238"></i>Inner detector</span>
+      <span><i class="sw" style="--c:#7fbf7a"></i>Electromagnetic calorimeter</span>
+      <span><i class="sw" style="--c:#c8655d"></i>Hadronic calorimeter</span>
+      <span><i class="sw" style="--c:#4f80c4"></i>Muon chambers</span>
+    </div>
   </section>
 
   <aside class="event-info" aria-label="Event information">

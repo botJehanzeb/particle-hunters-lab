@@ -5,6 +5,7 @@ import * as THREE from 'three';
 export const COLORS = {
   id: 0x2b3238, idLine: 0x75818c, em: 0x7fbf7a, had: 0xc8655d, mu: 0x4f80c4,
   track: 0xdfe5ea, hit: 0xff5a5a,
+  depositEM: 0xffd84d, depositHad: 0xffc23d, jet: 0x3f7fd0, met: 0xff6b6b,
 };
 
 // Barrel muon chambers: 16 flat sectors, alternating large (centred on multiples of 45°) and small.

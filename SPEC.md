@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**B4 — colour key and layer switches:** tracks, energy deposits, muon hits, jets (off by default), missing energy. *Done when:* each switch hides and shows its layer in both views.
+**C1 — download dataset 8:** unzip package A (group A): the 50 events to browse. *Done when:* there are 50 event files and one of them opens in the loader. (Already downloaded outside the repo on 3 Nov: `Projects/Particle-Hunters-Lab/data/dataset8/groupA/`, 50 files, 108 MB.)
 
-Last done: B3. Two views in the 3D area (side by side on a laptop, stacked on a phone). `js/detector.js` holds the geometry: chamber bands were measured from the hits of all 50 group A events (side view: 100% of 272,537 hits inside; end view: 100% of barrel hit centres, 99.99% of segments). Barrel vs end-cap is read from the hit's `identifier` station name (B = barrel; BEE counts as end-cap), so slimming (C2) must keep `identifier`. In the end view a barrel hit is drawn across its chamber at the hit's distance from the beam, not as Phoenix's tube-length line. Deposits are not drawn yet. Full step list: Phases A–E in the build plan (kept outside this repo).
+Last done: B4. Layer switches (tracks, energy deposits, muon-chamber hits, jets off by default, missing energy) and a colour key under the views; each switch works in both views (tested). `js/prepare.js` turns Phoenix's event data into the two views: barrel-only objects for Phoenix (end view), everything for the side view; one jet collection (`AntiKt4LCTopoJets`), one missing-energy collection (`MET_RefFinal`); particle labels never passed on; cells below 0.5 GeV dropped (same as C2). Phase B is complete (B5 was decided earlier). Open: deposits are drawn thin (6 cm wide, from the test page) and hard to see. Full step list: Phases A–E in the build plan (kept outside this repo).
 
 ## How it is built
 
@@ -30,7 +30,7 @@ Last done: B3. Two views in the 3D area (side by side on a laptop, stacked on a 
 
 ## Folder layout
 
-Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix, reads the test event, renders both views; status list shows progress and any error), `js/detector.js` (simplified detector and muon-chamber geometry), `events/test/event001.xml` (one test event: dataset 8 group A, `Electron`/`Muon`/`Photon` blocks removed, `TILE` renamed `Tile`), `SPEC.md`.
+Now: `index.html` (page skeleton), `css/style.css` (site colours and fonts), `js/main.js` (loads three.js then Phoenix, reads the test event, renders both views; status list shows progress and any error), `js/detector.js` (simplified detector and muon-chamber geometry), `js/prepare.js` (event data → what each view draws), `events/test/event001.xml` (one test event: dataset 8 group A, `Electron`/`Muon`/`Photon` blocks removed, `TILE` renamed `Tile`), `SPEC.md`.
 
 Planned (proposed, change if a step needs it):
 
