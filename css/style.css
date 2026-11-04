@@ -271,3 +271,37 @@ h2 {
 .q summary { cursor: pointer; font: 500 13px var(--mono); color: var(--gold); min-height: 28px; display: flex; align-items: center; }
 .q details[open] summary { color: var(--text-mute); }
 .q details p { font-size: 14px; }
+
+/* ---------- E2 guide link, intro line, guide page ---------- */
+.head-link { margin-left: auto; font: 500 14px var(--mono); color: var(--blue); text-decoration: none; }
+.head-link:hover { text-decoration: underline; }
+.intro { margin: 0; padding: 10px 16px 0; font-size: 15px; color: var(--text-mute); }
+.intro a, .guide a:not(.btn) { color: var(--blue); }
+.guide { max-width: 1200px; margin: 0 auto; padding: 16px 16px 48px; }
+.guide p { max-width: 75ch; }
+.guide section { margin-top: 32px; scroll-margin-top: 16px; }
+.guide p { margin: 0 0 12px; }
+.guide .lede { font-size: 20px; line-height: 1.45; margin-top: 8px; }
+.guide .start { display: inline-flex; align-items: center; text-decoration: none; border-color: var(--gold); color: var(--gold); }
+.toc { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 20px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--ink-2); font: 13px var(--mono); }
+.toc a { color: var(--text); text-decoration: none; }
+.toc a:hover { color: var(--gold); }
+.layers-list { margin: 0 0 12px; padding: 0; list-style: none; display: grid; gap: 8px; }
+.layers-list li { display: grid; grid-template-columns: 14px 1fr; gap: 10px; align-items: baseline; }
+.key { margin: 0; display: grid; grid-template-columns: minmax(0, 13em) 1fr; gap: 10px 16px; }
+.key dt { font: 500 14px var(--mono); display: flex; align-items: baseline; gap: 8px; }
+.key dt .sw { flex: none; }
+.key dd { margin: 0; }
+.tip-demo { display: inline-block; width: 18px; height: 18px; font: 500 11px/16px var(--mono); text-align: center; color: var(--text-mute); border: 1px solid var(--line); border-radius: 50%; }
+/* Laptop and wider: contents list down the left, sticky; the text fills the rest. */
+@media (min-width: 900px) {
+  .guide { display: grid; grid-template-columns: 200px minmax(0, 1fr); column-gap: 48px; max-width: none; margin: 0; padding: 32px 16px 48px; }
+  .guide > * { grid-column: 2; }
+  .guide > .toc { grid-column: 1; grid-row: 1 / span 20; align-self: start; position: sticky; top: 24px;
+    flex-direction: column; margin-top: 8px; padding: 14px 16px; gap: 10px; }
+  .key { grid-template-columns: minmax(0, 16em) 1fr; }
+}
+@media (max-width: 560px) {
+  .key { grid-template-columns: 1fr; gap: 2px; }
+  .key dd { margin-bottom: 10px; }
+}

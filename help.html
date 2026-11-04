@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Particle Hunters Lab · Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css?v=e2c">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="https://jehanzebwaqar.com/">Particle Hunters Lab</a>
+  <span class="sep" aria-hidden="true">·</span>
+  <span class="exercise">Guide</span>
+  <a class="head-link" href="./">← Back to the lab</a>
+</header>
+
+<main class="guide">
+  <p class="lede">You're about to look at real collisions recorded by the ATLAS detector at CERN. This page explains what you'll see and how every control works. It takes about five minutes to read.</p>
+  <p><a class="btn start" href="./">Start exploring →</a></p>
+
+  <nav class="toc" aria-label="On this page">
+    <a href="#atlas">What is ATLAS?</a>
+    <a href="#views">The two views</a>
+    <a href="#colours">Colour key</a>
+    <a href="#controls">Controls</a>
+    <a href="#questions">Questions</a>
+    <a href="#credits">Credits</a>
+  </nav>
+
+  <section id="atlas">
+    <h2>What is ATLAS?</h2>
+    <p>The Large Hadron Collider (LHC) at CERN, near Geneva, smashes protons together head-on. ATLAS is a giant detector built around one of the places where they collide. It records what flies out of each collision, layer by layer, like a camera made of many shells.</p>
+    <p>Each picture of one collision is called an <b>event</b>. All the events here are real. ATLAS recorded them in 2012, and CERN has made them free for everyone to use.</p>
+    <p>From the centre outwards, the layers are:</p>
+    <ul class="layers-list">
+      <li><i class="sw" style="--c:#2b3238"></i><span><b>Inner detector.</b> It records the path of every charged particle. A magnet bends those paths, so slow particles curl and fast ones fly almost straight.</span></li>
+      <li><i class="sw" style="--c:#7fbf7a"></i><span><b>Electromagnetic calorimeter.</b> It stops electrons and photons and measures their energy.</span></li>
+      <li><i class="sw" style="--c:#c8655d"></i><span><b>Hadronic calorimeter.</b> It stops heavier particles, such as protons, neutrons and pions.</span></li>
+      <li><i class="sw" style="--c:#4f80c4"></i><span><b>Muon chambers.</b> This is the outer layer, as big as a building. Very few particles get this far.</span></li>
+    </ul>
+  </section>
+
+  <section id="views">
+    <h2>The two views</h2>
+    <p>The same collision is drawn twice, side by side.</p>
+    <p><b>End view:</b> you look straight down the beam pipe, so the beams come towards you. You see the detector as rings. Everything here moves <i>across</i> the beam. Directions are angles around the beam: 0° is to the right and 90° is up.</p>
+    <p><b>Side view:</b> you look at the detector from the side, with the beam running left to right. Up and down is the distance from the beam. Left and right is the position along the beam. Things that fly close to the beam, towards the ends of the detector, only show up here.</p>
+    <p>Comparing the two views is the heart of the lab, and question 1 shows you why.</p>
+  </section>
+
+  <section id="colours">
+    <h2>Colour key</h2>
+    <dl class="key">
+      <dt><i class="sw line" style="--c:#dfe5ea"></i>Tracks</dt>
+      <dd>The path of a charged particle. Long tracks run all the way out to the muon chambers.</dd>
+      <dt><i class="sw" style="--c:#ffd84d"></i>Energy deposits</dt>
+      <dd>Yellow bars where a particle left energy in a calorimeter. A longer bar means more energy.</dd>
+      <dt><i class="sw" style="--c:#ff5a5a"></i>Muon-chamber hits</dt>
+      <dd>Red dots where something passed through the muon chambers.</dd>
+      <dt><i class="sw" style="--c:#3f7fd0"></i>Jets</dt>
+      <dd>Blue cones: sprays of many particles flying out together. They're hidden at first.</dd>
+      <dt><i class="sw dash" style="--c:#ff6b6b"></i>Missing energy</dt>
+      <dd>A dashed red line. Across the beam, everything should balance. If it doesn't, something invisible carried energy away, and the line points the way it went.</dd>
+      <dt><i class="sw line" style="--c:#b36bff"></i>Selected track</dt>
+      <dd>The track you clicked, drawn thick and purple in both views.</dd>
+    </dl>
+  </section>
+
+  <section id="controls">
+    <h2>Controls</h2>
+    <dl class="key">
+      <dt>Event bar</dt>
+      <dd>The strip at the top. It shows which event you're on, ATLAS's own run and event numbers, when the event was recorded, and the missing energy with its direction. <span class="badge data">Real data</span> means ATLAS recorded it, not a computer simulation.</dd>
+      <dt>Previous / Next / Go to</dt>
+      <dd>Move between events, or jump straight to one.</dd>
+      <dt>All 50 / Balance set</dt>
+      <dd>Choose which events to browse: 50 real events, or the 7 picked for question 1.</dd>
+      <dt>Show</dt>
+      <dd>Turn each kind of object on or off in both views.</dd>
+      <dt>Hide: tracks below</dt>
+      <dd>Hides slow tracks, those with a small momentum across the beam. Most tracks are slow, so hiding them makes the important ones stand out. It changes both views and the table.</dd>
+      <dt>Hide: deposits below</dt>
+      <dd>Hides small energy deposits the same way.</dd>
+      <dt>Muon-chamber hits</dt>
+      <dd>Most hits in the muon chambers are background, not from this collision. “On muon tracks” shows only the hits that belong to a long track. “All” shows every hit.</dd>
+      <dt>Zoom</dt>
+      <dd>Each view has its own slider. Once you've zoomed in, drag to move around. Reset goes back to the whole detector.</dd>
+      <dt>Click a track</dt>
+      <dd>Click a track in either view, or a row in the table. It turns purple in both views and in the table. Click empty space to clear it.</dd>
+      <dt>Track table</dt>
+      <dd>One row per track, fastest first: its momentum, direction and charge. Tap a <span class="tip-demo">?</span> to see what each column means.</dd>
+    </dl>
+  </section>
+
+  <section id="questions">
+    <h2>Questions</h2>
+    <p>The questions are in the panel next to the views. Each one has a button that takes you to the right event. Try the question first, then open “Show answer” to check.</p>
+  </section>
+
+  <section id="credits">
+    <h2>Credits</h2>
+    <p><b>Data:</b> ATLAS Collaboration, “ATLAS ZPath 2015 Masterclass dataset 8”, CERN Open Data Portal, record 360, <a href="https://opendata.cern.ch/record/360">opendata.cern.ch/record/360</a>. The data are released under the Creative Commons Zero v1.0 Universal licence. Neither ATLAS nor CERN endorse any works, scientific or otherwise, produced using these data, and that includes this lab. The event files here are shortened versions of the originals.</p>
+    <p><b>Event display:</b> <a href="https://hepsoftwarefoundation.org/phoenix/">Phoenix</a> by the HEP Software Foundation (Apache 2.0 licence), running on <a href="https://threejs.org/">three.js</a> (MIT licence).</p>
+    <p><b>Inspired by</b> <a href="https://hypatia.iasa.gr/en/help.html">HYPATIA</a>, the event-analysis tool used in the ATLAS Masterclasses.</p>
+    <p><b>Made by</b> <a href="https://jehanzebwaqar.com/">Jehanzeb Waqar</a> for the Particle Hunters course.</p>
+  </section>
+
+  <p><a class="btn start" href="./">Start exploring →</a></p>
+</main>
+
+</body>
+</html>
