@@ -61,11 +61,13 @@ h2 {
   padding: var(--gap) 16px;
   grid-template-columns: 1fr;
   grid-template-areas:
+    "bar"
     "display"
     "info"
     "objects";
 }
 
+.event-bar  { grid-area: bar; }
 .display    { grid-area: display; }
 .event-info { grid-area: info; }
 .objects    { grid-area: objects; }
@@ -116,11 +118,12 @@ h2 {
   .lab {
     grid-template-columns: 1fr 300px;
     grid-template-areas:
+      "bar bar"
       "display info"
       "objects objects";
   }
   .display { grid-template-columns: 1fr 1fr; }
-  .stage { height: max(380px, calc(100vh - 330px)); }
+  .stage { height: max(380px, calc(100vh - 390px)); }
   .objects { height: 200px; overflow: auto; }
 }
 
@@ -163,7 +166,21 @@ h2 {
 .pick select { padding-right: 8px; }
 .counter { margin: 10px 0 4px; font-family: var(--mono); font-size: 15px; }
 
-.event-meta { margin: 0 0 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--mono); font-size: 13px; color: var(--text-mute); }
+/* ---------- D2 event header bar ---------- */
+.event-bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 20px;
+  padding: 8px 12px;
+  background: var(--ink-2); border: 1px solid var(--line); border-radius: 6px;
+  font: 14px var(--mono);
+}
+.eb-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.eb-main { color: var(--gold); font-weight: 500; }
+.eb-k { color: var(--text-mute); }
+.eb-k[title], #eb-dir[title] { text-decoration: underline dotted var(--text-mute); text-underline-offset: 3px; cursor: help; }
+.eb-arrow { flex: none; transition: transform 0.2s; }
+.eb-arrow circle { fill: none; stroke: var(--line); }
+.eb-arrow path { fill: none; stroke: #ff6b6b; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.eb-met.none .eb-arrow { visibility: hidden; }
 .badge { font: 500 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--gold); color: var(--gold); }
 .badge.data { border-color: #5cc489; color: #5cc489; }
 

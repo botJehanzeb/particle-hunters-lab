@@ -261,7 +261,19 @@ const nextBtn = document.getElementById('next');
 const counter = document.getElementById('counter');
 const loadNote = document.getElementById('load-note');
 const badge = document.getElementById('badge');
-const eventDate = document.getElementById('event-date');
+// D2: event header bar.
+const eb = Object.fromEntries(['index', 'run', 'event', 'date', 'met', 'arrow', 'dir'].map((k) => [k, document.getElementById(`eb-${k}`)]));
+const ebMet = eb.met.parentElement;
+function showMet(meta) {
+  const known = meta && meta.met != null;
+  ebMet.classList.toggle('none', !known);
+  if (!known) { eb.met.textContent = meta ? 'none recorded' : '…'; eb.dir.textContent = ''; return; }
+  // φ is counted anticlockwise from +x; in the end view +x is to the right and +y is up.
+  const deg = ((meta.metPhi * 180) / Math.PI + 360) % 360;
+  eb.met.textContent = `${meta.met.toFixed(1)} GeV`;
+  eb.dir.textContent = `direction ${Math.round(deg)}°`;
+  eb.arrow.style.transform = `rotate(${-deg}deg)`;
+}
 // D1: dropdown of all events (numbers only — nothing that hints at the answer).
 const pick = document.getElementById('pick');
 EVENTS.forEach((_, i) => pick.add(new Option(`Event ${i + 1}`, String(i))));
@@ -277,7 +289,12 @@ async function showEvent(i) {
   badge.textContent = info.data ? 'Real data' : 'Simulation';
   badge.classList.toggle('data', info.data);
   badge.title = info.data ? 'Recorded by the ATLAS detector' : 'Made by a computer simulation of ATLAS';
-  eventDate.textContent = info.data && info.date ? `Recorded ${info.date.split(' ')[0]}` : '';
+  eb.index.textContent = `Event ${i + 1} of ${EVENTS.length}`;
+  eb.run.textContent = info.run ?? '–';
+  eb.event.textContent = info.event ?? '–';
+  // Date and time as recorded (seconds dropped); simulated events have none.
+  eb.date.textContent = info.data && info.date ? info.date.replace(/^(\S+ \d\d:\d\d):\d\d/, '$1') : 'No recording date';
+  showMet(null);
   prevBtn.disabled = i === 0;
   nextBtn.disabled = i === EVENTS.length - 1;
   const t0 = performance.now();
@@ -290,6 +307,7 @@ async function showEvent(i) {
   }
   if (mine !== request) return; // the student has already moved on
   const prepared = prepareEvent(readEvent(text));
+  showMet(prepared.meta);
   ed.parsePhoenixEvents({ [EVENTS[i].file]: prepared.phoenix });
   try { ed.getThreeManager().getRendererManager().getMainRenderer().setAnimationLoop(null); } catch (e) { /* keep Phoenix's hidden loop */ }
   disposeRZ();

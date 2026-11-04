@@ -18,6 +18,20 @@
 </header>
 
 <main class="lab">
+  <section class="event-bar" aria-label="Event header" aria-live="polite">
+    <span class="eb-item eb-main" id="eb-index">Event –</span>
+    <span class="eb-item"><span class="eb-k">Run</span> <span id="eb-run">–</span></span>
+    <span class="eb-item"><span class="eb-k" title="ATLAS gives every collision in a run its own number">ATLAS event</span> <span id="eb-event">–</span></span>
+    <span class="eb-item" id="eb-date"></span>
+    <span class="badge" id="badge">–</span>
+    <span class="eb-item eb-met">
+      <span class="eb-k">Missing energy</span>
+      <span id="eb-met">–</span>
+      <svg class="eb-arrow" id="eb-arrow" viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true"><circle r="11" /><path d="M-7 0H6M2-4l4 4-4 4" /></svg>
+      <span id="eb-dir" title="Direction in the end view: an angle around the beam, counted anticlockwise from the right (0° = right, 90° = up). Physicists call this angle φ (phi)."></span>
+    </span>
+  </section>
+
   <section class="display" aria-label="Detector views">
     <figure class="view">
       <figcaption>End view <span>looking down the beam</span></figcaption>
@@ -53,7 +67,6 @@
     </div>
     <label class="pick">Go to <select class="btn" id="pick" disabled></select></label>
     <p class="counter" id="counter" aria-live="polite">Event –/–</p>
-    <p class="event-meta"><span class="badge" id="badge">–</span> <span id="event-date"></span></p>
     <p class="placeholder" id="load-note"></p>
     <h2 class="status-head">Status</h2>
     <ol class="status" id="status" aria-live="polite"></ol>

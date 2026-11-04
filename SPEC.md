@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**D2 — event header bar:** event and run number, date, a Data / Simulation badge, and the missing energy with its direction, like HYPATIA's header. *Done when:* the header changes with every event.
+**D3 — object table:** the real symbols p, pT, η, φ, θ and q, each with a "?" that explains it on hover or tap. No particle-type column. *Done when:* the rows match what you see in the views.
 
-Done: Phases A, B and C; D1 (Previous / Next, "Go to" dropdown with event numbers only, counter — all kept in sync). C6 checked every event of both sets through the page (load, both views, Real data badge, date): 57/57, no page errors; all 52 long tracks end in the muon system. The event panel shows a Real data / Simulation badge (from index.json's flag) and the recording date. `?set=balance` opens the balance set until E1 adds the switch. Full step list: Phases A–E in the build plan (kept outside this repo).
+Done: Phases A, B and C; D1 (Previous / Next, "Go to" dropdown with event numbers only, counter — all kept in sync); D2 (full-width header bar: event N of M, run, ATLAS event number, date and time, Real data / Simulation badge, missing energy in GeV with its direction in degrees and an arrow that matches the end view). C6 checked every event of both sets through the page (load, both views, Real data badge, date): 57/57, no page errors; all 52 long tracks end in the muon system. `?set=balance` opens the balance set until E1 adds the switch. Full step list: Phases A–E in the build plan (kept outside this repo).
 
 Open items: deposits are drawn thin (6 cm wide) and hard to see; the balance set only reads clearly once D6's pT cut hides soft tracks; remove the "Shown in N ms" note in polish (E).
 
@@ -28,6 +28,7 @@ Open items: deposits are drawn thin (6 cm wide) and hard to see; the balance set
 - **3D display:** [Phoenix](https://hepsoftwarefoundation.org/phoenix/) 4.2.3 with three.js 0.184.0, from a CDN. Versions pinned; do not upgrade. Load three.js as a module, set the global `THREE`, *then* load the Phoenix bundle.
 - **Two views:** Phoenix draws the end view from barrel-only objects; the page draws its own ρ–z side view (barrel + end-caps) from all objects (`js/prepare.js`). The page handles clicks and highlights in both views; Phoenix's own selection is not used.
 - **Detector drawing** (`js/detector.js`): muon-chamber bands measured from the hits of all 50 group A events. Barrel vs end-cap comes from each hit's `identifier` station name (B = barrel; BEE counts as end-cap). In the end view a barrel hit is drawn across its chamber at the hit's distance from the beam.
+- **Missing energy** = √(etx² + ety²) of `MET_RefFinal`, in GeV (checked against the answer drafts). The XML's `<et>` field is not the missing energy; don't use it. Direction = φ in degrees, anticlockwise from the right of the end view.
 - **Events load one at a time** when shown, with the neighbours prefetched (`js/main.js`). Layer switches: tracks, deposits, muon hits, jets (off by default), missing energy.
 
 ## Data
