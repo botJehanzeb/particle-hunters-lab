@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Particle Hunters Lab · Reading Tracks</title>
-<link rel="stylesheet" href="css/style.css?v=e2d">
+<link rel="icon" type="image/png" sizes="64x64" href="icon-64.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="css/style.css?v=e3">
 </head>
 <body>
 
@@ -15,7 +17,7 @@
   <a class="head-link" href="help.html">Guide</a>
 </header>
 
-<p class="intro">Real collisions recorded by the ATLAS detector at CERN in 2012. Click a track to follow it in both views, and try the questions in the side panel. New here? <a href="help.html">Read the guide</a> (5 minutes).</p>
+<p class="intro">Real collisions recorded by the ATLAS detector at CERN in 2012. Click a track to follow it in both views, then try the four questions. New here? <a href="help.html">Read the guide</a> (5 minutes).</p>
 
 <main class="lab">
   <section class="event-bar" aria-label="Event header" aria-live="polite">
@@ -35,11 +37,11 @@
   <section class="display" aria-label="Detector views">
     <figure class="view">
       <figcaption><span class="title">End view <span>looking down the beam</span></span><span class="zoom"><label for="zoom-end">Zoom</label><input type="range" id="zoom-end" min="0" max="100" value="0" aria-label="Zoom the end view"><output id="zoom-end-val" for="zoom-end">×1.0</output><button class="btn btn-sm" type="button" id="reset-end">Reset</button></span></figcaption>
-      <div class="stage" id="stage-end"><canvas></canvas></div>
+      <div class="stage" id="stage-end"><canvas></canvas><p class="stage-note">Loading the detector…</p></div>
     </figure>
     <figure class="view">
       <figcaption><span class="title">Side view <span>ρ–z, barrel and end-caps</span></span><span class="zoom"><label for="zoom-side">Zoom</label><input type="range" id="zoom-side" min="0" max="100" value="0" aria-label="Zoom the side view"><output id="zoom-side-val" for="zoom-side">×1.0</output><button class="btn btn-sm" type="button" id="reset-side">Reset</button></span></figcaption>
-      <div class="stage" id="stage-side"><canvas></canvas></div>
+      <div class="stage" id="stage-side"><canvas></canvas><p class="stage-note">Loading the detector…</p></div>
     </figure>
 
     <div class="layers" role="group" aria-label="Show or hide parts of the event">
@@ -57,19 +59,19 @@
         <label for="cut-pt">Tracks below</label>
         <input type="range" id="cut-pt" min="0" max="7" step="1" value="2">
         <output id="cut-pt-val" for="cut-pt">1 GeV</output>
-        <button class="tip" type="button" aria-label="What does the track cut do?" data-tip="Hides tracks whose momentum across the beam (pT) is smaller than this. Most tracks are soft: hiding them makes the important ones easy to see. Changes both views and the table."></button>
+        <button class="tip" type="button" aria-label="What does the track cut do?" data-tip="Hides tracks whose momentum across the beam (pT) is smaller than this. Most tracks are soft: hiding them makes the important ones easy to see. Changes both views and the table.">?</button>
       </span>
       <span class="cut">
         <label for="cut-et">Deposits below</label>
         <input type="range" id="cut-et" min="0" max="5" step="1" value="0">
         <output id="cut-et-val" for="cut-et">show all</output>
-        <button class="tip" type="button" aria-label="What does the deposit cut do?" data-tip="Hides energy deposits whose energy across the beam (ET) is smaller than this. Changes both views."></button>
+        <button class="tip" type="button" aria-label="What does the deposit cut do?" data-tip="Hides energy deposits whose energy across the beam (ET) is smaller than this. Changes both views.">?</button>
       </span>
       <span class="cut" role="radiogroup" aria-label="Which muon-chamber hits to show">
         <span>Muon-chamber hits:</span>
         <label class="radio"><input type="radio" name="hits-mode" value="track" checked> on muon tracks</label>
         <label class="radio"><input type="radio" name="hits-mode" value="all"> all</label>
-        <button class="tip" type="button" aria-label="Which muon-chamber hits?" data-tip="Most hits in the muon chambers are background, not from this collision. 'On muon tracks' shows only the hits that belong to a long track; 'all' shows every hit."></button>
+        <button class="tip" type="button" aria-label="Which muon-chamber hits?" data-tip="Most hits in the muon chambers are background, not from this collision. 'On muon tracks' shows only the hits that belong to a long track; 'all' shows every hit.">?</button>
       </span>
     </div>
 
@@ -86,7 +88,7 @@
     <div class="set-switch" role="radiogroup" aria-label="Which events to browse">
       <label class="radio"><input type="radio" name="event-set" value="50" checked> All 50</label>
       <label class="radio"><input type="radio" name="event-set" value="balance"> Balance set (7)</label>
-      <button class="tip" type="button" aria-label="What is the balance set?" data-tip="Seven real collisions picked for question 1. Each has two fast tracks that are easy to compare."></button>
+      <button class="tip" type="button" aria-label="What is the balance set?" data-tip="Seven real collisions picked for question 1. Each has two fast tracks that are easy to compare.">?</button>
     </div>
     <div class="nav">
       <button class="btn" id="prev" type="button" disabled>← Previous</button>
@@ -128,10 +130,11 @@
       </li>
       <li class="q">
         <p>Which tracks bend the most in the end view: those with small momentum across the beam or those with large?</p>
-        <p class="how">Set “Hide: tracks below” to “show all”, zoom in on the centre of the end view, and click a few tracks to read their p<sub>T</sub>.</p>
+        <p class="how">Set “Hide: tracks below” to “show all”. Then slide it up, one step at a time, to 5 GeV and watch the end view. Which tracks disappear first: the curly ones or the straight ones?</p>
+        <button class="btn btn-sm go" type="button" data-set="50" data-event="3">Go to event 4</button>
         <details>
           <summary>Show answer</summary>
-          <p><b>Small p<sub>T</sub>.</b> A magnet inside ATLAS bends charged particles around the beam. The less momentum a particle has, the tighter it curls. Very fast tracks look almost straight.</p>
+          <p><b>Small p<sub>T</sub>.</b> The curly tracks vanish first, because the cut hides the tracks with the smallest p<sub>T</sub>. A magnet inside ATLAS bends charged particles around the beam. The less momentum a particle has, the tighter it curls. Very fast tracks look almost straight.</p>
         </details>
       </li>
     </ol>
@@ -147,12 +150,12 @@
         <thead>
           <tr>
             <th scope="col" class="num">#</th>
-            <th scope="col"><span class="sym">p</span><button class="tip" type="button" aria-label="What is p?" data-tip="Momentum: how much 'push' the particle carries, in GeV. Heavier or faster particles have more."></button><span class="cap">momentum</span></th>
-            <th scope="col"><span class="sym">p<sub>T</sub></span><button class="tip" type="button" aria-label="What is pT?" data-tip="Transverse momentum: the part of the momentum that goes sideways, across the beam, in GeV. This is the part you see in the end view."></button><span class="cap">across beam</span></th>
-            <th scope="col"><span class="sym">η</span><button class="tip" type="button" aria-label="What is η?" data-tip="Pseudorapidity (eta): how far the track tilts toward either end of the detector. 0 means straight out sideways; big numbers (+ or −) mean close to the beam."></button><span class="cap">tilt</span></th>
-            <th scope="col"><span class="sym">φ</span><button class="tip" type="button" aria-label="What is φ?" data-tip="Phi: the direction around the beam in the end view, in degrees, counted anticlockwise from the right (0° = right, 90° = up)."></button><span class="cap">direction</span></th>
-            <th scope="col"><span class="sym">θ</span><button class="tip" type="button" aria-label="What is θ?" data-tip="Theta: the angle between the track and the beam, in degrees. 90° means straight out sideways; near 0° or 180° means close to the beam."></button><span class="cap">angle to beam</span></th>
-            <th scope="col"><span class="sym">q</span><button class="tip" type="button" aria-label="What is q?" data-tip="Charge: + or −. You can tell from which way the track bends in the magnetic field."></button><span class="cap">charge</span></th>
+            <th scope="col"><span class="sym">p</span><button class="tip" type="button" aria-label="What is p?" data-tip="Momentum: how much 'push' the particle carries, in GeV. Heavier or faster particles have more.">?</button><span class="cap">momentum</span></th>
+            <th scope="col"><span class="sym">p<sub>T</sub></span><button class="tip" type="button" aria-label="What is pT?" data-tip="Transverse momentum: the part of the momentum that goes sideways, across the beam, in GeV. This is the part you see in the end view.">?</button><span class="cap">across beam</span></th>
+            <th scope="col"><span class="sym">η</span><button class="tip" type="button" aria-label="What is η?" data-tip="Pseudorapidity (eta): how far the track tilts toward either end of the detector. 0 means straight out sideways; big numbers (+ or −) mean close to the beam.">?</button><span class="cap">tilt</span></th>
+            <th scope="col"><span class="sym">φ</span><button class="tip" type="button" aria-label="What is φ?" data-tip="Phi: the direction around the beam in the end view, in degrees, counted anticlockwise from the right (0° = right, 90° = up).">?</button><span class="cap">direction</span></th>
+            <th scope="col"><span class="sym">θ</span><button class="tip" type="button" aria-label="What is θ?" data-tip="Theta: the angle between the track and the beam, in degrees. 90° means straight out sideways; near 0° or 180° means close to the beam.">?</button><span class="cap">angle to beam</span></th>
+            <th scope="col"><span class="sym">q</span><button class="tip" type="button" aria-label="What is q?" data-tip="Charge: + or −. You can tell from which way the track bends in the magnetic field.">?</button><span class="cap">charge</span></th>
           </tr>
         </thead>
         <tbody id="obj-rows"></tbody>
@@ -180,6 +183,7 @@
       li.textContent = msg;
       var list = document.getElementById('status');
       if (list) list.appendChild(li);
+      for (var n of document.querySelectorAll('.stage-note')) n.textContent = 'Something went wrong. See Status for details.';
     }
     window.addEventListener('error', function (e) {
       add('Error: ' + (e.message || e.type) + (e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')' : ''));
@@ -190,7 +194,7 @@
   })();
 </script>
 
-<script type="module" src="js/main.js?v=e2d"></script>
+<script type="module" src="js/main.js?v=e3"></script>
 
 </body>
 </html>

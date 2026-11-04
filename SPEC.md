@@ -17,7 +17,7 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**E3 — test pass:** Chrome, Firefox, Safari and a phone, plus a slow connection; then one real student or teacher tries it. *Done when:* no console errors and the tester finishes the questions.
+**E3 — test pass** (in progress). Automated part done (headless Chrome on the live site, 4 Nov): 50/50 + 7/7 events load, question buttons and the Q1/Q2 numbers match the page, no sideways scroll at 390 px, first event 10.6 s on Fast 3G / 36.8 s on Slow 3G (1.13 MB), next event instant. Fixes from it are live: intro wording, Q4 now "slide the cut and watch which tracks vanish" with its own Go button, "Loading the detector…" note in both views, tab icon (`icon-64.png`, `icon-180.png`), "?" buttons filled in the HTML. *Still to do:* Firefox, Safari and phone by hand (incl. a real click on the set radios), then one real student or teacher finishes the questions.
 
 Done: Phases A, B and C; D1 (Previous / Next, "Go to" dropdown with event numbers only, counter — all kept in sync); D2 (full-width header bar: event N of M, run, ATLAS event number, date and time, Real data / Simulation badge, missing energy in GeV with its direction in degrees and an arrow that matches the end view); D3 (track table: #, p, pT, η, φ, θ, q, highest pT first, each symbol with a plain caption and a "?" explanation; each row has `data-pick` = the track's pickId); D4 (click linking: nearest track within 8 px in either view, projected through each view's camera, drawn as a thick purple `Line2` copy in both views plus the table row; row click selects; empty click / event change clears; follows the Tracks switch); D5 (per-view zoom slider ×1–×30, log scale, readout and Reset; drag pans once zoomed, a >4 px drag is not a click; touch swipe scrolls the page at ×1. Side-view tracks already show at full length: inner tracks end at the inner detector edge, ρ ≈ 1 m, because the XML stores only start and end points); D6 (Hide row: track cut on pT, default 1 GeV; separate deposit cut on ET, default show all — kept separate on purpose, deposits and tracks are not one-to-one; muon hits "on muon tracks" by default or "all". A cut change re-runs `prepareEvent` on the cached raw event and redraws both views and the table; a selected track stays selected if it passes). C6 checked every event of both sets through the page (load, both views, Real data badge, date): 57/57, no page errors; all 52 long tracks end in the muon system. E1 (set switch "All 50 / Balance set (7)" in the event panel, switched in place, URL keeps `?set=balance`; four questions in the side panel, each with a "Go to event" button and a closed "Show answer": momentum balance (balance event 1), tracks above 10 GeV in event 4 (answer 1 of 509), which layer event 1's long tracks reach (muon chambers, particle not named), low vs high pT curl. No charge question: Phoenix's curvature sign is unreliable. On desktop the side panel scrolls on its own). E2 (`help.html` guide: what ATLAS is + the four layers, the two views, colour key, every control, how the questions work, credits — data credit and no-endorsement sentence copied from the record 360 page, CC0 v1.0; Phoenix Apache-2.0, three.js MIT; HYPATIA as inspiration. On laptops a sticky contents list sits on the left, left-aligned with the header. The lab page has a "Guide" link in the header and a one-line intro above the event bar). Full step list: Phases A–E in the build plan (kept outside this repo).
 
@@ -45,7 +45,7 @@ Open items: the default track cut leaves ~107 tracks per event (2 GeV would leav
 ## Folder layout
 
 ```
-index.html  help.html  css/style.css  js/main.js  js/detector.js  js/prepare.js
+index.html  help.html  icon-64.png  icon-180.png  css/style.css  js/main.js  js/detector.js  js/prepare.js
 events/50/        browse set + index.json
 events/balance/   balance set + index.json
 tools/            Python helpers (not used by the page)
@@ -62,7 +62,7 @@ SPEC.md
 - Plain-word labels ("momentum", "direction", "charge"); symbols (p, pT, η, φ, θ, q) only behind a "?" on hover or tap. Short text blocks. A session is about 20 minutes.
 - Store a Data / Simulation flag for every event; run numbers alone are not proof.
 - Muon-chamber hits: show only on-track hits by default (most hits are background).
-- **Cache-busting:** every CSS/JS link and local import carries `?v=<step>` (now `e2d`). Bump it in all six places (index.html ×2, help.html ×1, main.js ×2, prepare.js ×1) in any commit that changes CSS or JS; Pages lets browsers cache files for 10 min, and a stale mix breaks the page. Every import of a file must use the same `?v=`, or it loads twice.
+- **Cache-busting:** every CSS/JS link and local import carries `?v=<step>` (now `e3`). Bump it in all six places (index.html ×2, help.html ×1, main.js ×2, prepare.js ×1) in any commit that changes CSS or JS; Pages lets browsers cache files for 10 min, and a stale mix breaks the page. Every import of a file must use the same `?v=`, or it loads twice.
 - One step = one session = one commit, named with the step ("A3 page skeleton"). Do only the step asked; don't change other features. Return complete changed files plus a one-line summary.
 - No analytics or tracking until a consent check for under-16s is decided.
 
