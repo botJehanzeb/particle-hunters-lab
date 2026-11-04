@@ -159,6 +159,8 @@ h2 {
 }
 .btn:hover:not(:disabled) { border-color: var(--text-mute); }
 .btn:disabled { opacity: 0.45; cursor: default; }
+.pick { display: flex; align-items: center; gap: 8px; margin-top: 8px; font: 13px var(--mono); color: var(--text-mute); }
+.pick select { padding-right: 8px; }
 .counter { margin: 10px 0 4px; font-family: var(--mono); font-size: 15px; }
 
 .event-meta { margin: 0 0 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--mono); font-size: 13px; color: var(--text-mute); }

@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**D1 — event browser:** Previous / Next buttons, a dropdown, and "Event 10/50". *Done when:* switching events updates both views. (Previous / Next and the counter exist since C3; D1 adds the dropdown.)
+**D2 — event header bar:** event and run number, date, a Data / Simulation badge, and the missing energy with its direction, like HYPATIA's header. *Done when:* the header changes with every event.
 
-Done: Phases A, B and C. C6 checked every event of both sets through the page (load, both views, Real data badge, date): 57/57, no page errors; all 52 long tracks end in the muon system. The event panel shows a Real data / Simulation badge (from index.json's flag) and the recording date. `?set=balance` opens the balance set until E1 adds the switch. Full step list: Phases A–E in the build plan (kept outside this repo).
+Done: Phases A, B and C; D1 (Previous / Next, "Go to" dropdown with event numbers only, counter — all kept in sync). C6 checked every event of both sets through the page (load, both views, Real data badge, date): 57/57, no page errors; all 52 long tracks end in the muon system. The event panel shows a Real data / Simulation badge (from index.json's flag) and the recording date. `?set=balance` opens the balance set until E1 adds the switch. Full step list: Phases A–E in the build plan (kept outside this repo).
 
 Open items: deposits are drawn thin (6 cm wide) and hard to see; the balance set only reads clearly once D6's pT cut hides soft tracks; remove the "Shown in N ms" note in polish (E).
 

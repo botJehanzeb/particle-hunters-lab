@@ -262,10 +262,16 @@ const counter = document.getElementById('counter');
 const loadNote = document.getElementById('load-note');
 const badge = document.getElementById('badge');
 const eventDate = document.getElementById('event-date');
+// D1: dropdown of all events (numbers only — nothing that hints at the answer).
+const pick = document.getElementById('pick');
+EVENTS.forEach((_, i) => pick.add(new Option(`Event ${i + 1}`, String(i))));
+pick.disabled = false;
+pick.addEventListener('change', () => showEvent(Number(pick.value)));
 
 async function showEvent(i) {
   const mine = ++request;
   counter.textContent = `Event ${i + 1}/${EVENTS.length}`;
+  pick.value = String(i);
   // Data or simulation comes from index.json's flag, never from the run number (see SPEC, Data).
   const info = EVENTS[i];
   badge.textContent = info.data ? 'Real data' : 'Simulation';
