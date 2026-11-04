@@ -1,4 +1,4 @@
-/* Particle Hunters Lab — colours and fonts taken from jehanzebwaqar.com */
+/* Particle Hunters Lab — colours and fonts match jehanzebwaqar.com */
 :root {
   --ink: #0F1420;        /* page background */
   --ink-2: #121828;      /* panels */
@@ -7,8 +7,10 @@
   --text-mute: #8E97AA;
   --gold: #FFC940;       /* site's --neon-gold */
   --blue: #8FD3FF;       /* site's --neon-blue */
-  --serif: 'Newsreader', Georgia, serif;
-  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* Apple's system font (SF Pro) on Apple devices; Segoe UI on Windows, Roboto on Android. Nothing to download. */
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --serif: var(--sans);
+  --mono: var(--sans);
   --gap: 12px;
 }
 

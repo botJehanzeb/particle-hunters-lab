@@ -54,13 +54,15 @@ SPEC.md
 
 ## Rules
 
+- **Font:** Apple system font stack (`--sans` in `css/style.css`: SF Pro on Apple, Segoe UI on Windows, Roboto on Android), same as jehanzebwaqar.com. No web fonts are loaded.
+
 - Plain HTML, CSS and JavaScript. No build tools, no npm, no frameworks.
 - **Never show the answer** (lepton type, event category) anywhere a student can see it, including Phoenix's info panel. Answers live only in `answers.json`; never put them as extra fields on Phoenix objects.
 - Show energies and momenta in **GeV**. In Phoenix's JiveXML loader, cell energies are in GeV but clusters and tracks are in MeV.
 - Plain-word labels ("momentum", "direction", "charge"); symbols (p, pT, η, φ, θ, q) only behind a "?" on hover or tap. Short text blocks. A session is about 20 minutes.
 - Store a Data / Simulation flag for every event; run numbers alone are not proof.
 - Muon-chamber hits: show only on-track hits by default (most hits are background).
-- **Cache-busting:** every CSS/JS link and local import carries `?v=<step>` (now `e2c`). Bump it in all six places (index.html ×2, help.html ×1, main.js ×2, prepare.js ×1) in any commit that changes CSS or JS; Pages lets browsers cache files for 10 min, and a stale mix breaks the page. Every import of a file must use the same `?v=`, or it loads twice.
+- **Cache-busting:** every CSS/JS link and local import carries `?v=<step>` (now `e2d`). Bump it in all six places (index.html ×2, help.html ×1, main.js ×2, prepare.js ×1) in any commit that changes CSS or JS; Pages lets browsers cache files for 10 min, and a stale mix breaks the page. Every import of a file must use the same `?v=`, or it loads twice.
 - One step = one session = one commit, named with the step ("A3 page skeleton"). Do only the step asked; don't change other features. Return complete changed files plus a one-line summary.
 - No analytics or tracking until a consent check for under-16s is decided.
 

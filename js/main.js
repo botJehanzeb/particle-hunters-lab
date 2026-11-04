@@ -2,8 +2,8 @@
 // B1: load three.js, make it the global THREE, then load and start Phoenix.
 // Phoenix's bundle expects THREE as a global, so the order matters.
 import * as THREE from 'three';
-import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=e2c';
-import { prepareEvent, etaToTheta, DEFAULT_CUTS } from './prepare.js?v=e2c';
+import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=e2d';
+import { prepareEvent, etaToTheta, DEFAULT_CUTS } from './prepare.js?v=e2d';
 import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
