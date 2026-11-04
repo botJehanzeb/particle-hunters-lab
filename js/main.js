@@ -2,8 +2,8 @@
 // B1: load three.js, make it the global THREE, then load and start Phoenix.
 // Phoenix's bundle expects THREE as a global, so the order matters.
 import * as THREE from 'three';
-import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=d4';
-import { prepareEvent, etaToTheta } from './prepare.js?v=d4';
+import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=d5';
+import { prepareEvent, etaToTheta } from './prepare.js?v=d5';
 import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
@@ -221,7 +221,8 @@ function makeView(kind, detScene) {
   else camera.position.set(-80000, 0, 0);
   camera.up.set(0, 1, 0);
   camera.lookAt(0, 0, 0);
-  const v = { kind, stage, renderer, camera, detScene, w: 1, h: 1 };
+  // D5: zoom (1 = whole detector) and pan centre (cx, cy) in the view's own screen-aligned units (mm).
+  const v = { kind, stage, renderer, camera, detScene, w: 1, h: 1, zoom: 1, cx: 0, cy: 0, dragged: false };
   new ResizeObserver(() => { fit(v); requestRender(); }).observe(stage);
   fit(v);
   return v;
@@ -234,8 +235,16 @@ function fit(v) {
   const halfH = v.kind === 'end'
     ? (aspect >= 1 ? 11500 : 11500 / aspect)
     : Math.max(12800, 23000 / aspect);
-  const halfW = halfH * aspect;
-  Object.assign(v.camera, { left: -halfW, right: halfW, top: halfH, bottom: -halfH });
+  v.baseH = halfH;
+  v.baseW = halfH * aspect;
+  applyCamera(v);
+}
+// Zoom shrinks the visible window; the centre is kept inside the whole-detector window so the view can't wander off.
+function applyCamera(v) {
+  const hw = v.baseW / v.zoom, hh = v.baseH / v.zoom;
+  v.cx = Math.max(-(v.baseW - hw), Math.min(v.baseW - hw, v.cx));
+  v.cy = Math.max(-(v.baseH - hh), Math.min(v.baseH - hh, v.cy));
+  Object.assign(v.camera, { left: v.cx - hw, right: v.cx + hw, top: v.cy + hh, bottom: v.cy - hh });
   v.camera.updateProjectionMatrix();
 }
 // D4: the selected track is drawn again, thick and purple, in a scene of its own on top of each view.
@@ -393,16 +402,63 @@ document.getElementById('show-tracks').addEventListener('change', syncHighlight)
 
 for (const v of Object.values(views)) {
   const canvas = v.renderer.domElement;
-  canvas.addEventListener('click', (e) => select(nearestTrack(v, e.offsetX, e.offsetY)));
+  canvas.addEventListener('click', (e) => { if (!v.dragged) select(nearestTrack(v, e.offsetX, e.offsetY)); });
   canvas.addEventListener('pointermove', (e) => {
-    if (e.pointerType !== 'mouse') return;
-    canvas.style.cursor = nearestTrack(v, e.offsetX, e.offsetY) ? 'pointer' : '';
+    if (e.pointerType !== 'mouse' || v.drag) return;
+    canvas.style.cursor = nearestTrack(v, e.offsetX, e.offsetY) ? 'pointer' : v.zoom > 1 ? 'grab' : '';
   });
 }
 objRows.addEventListener('click', (e) => {
   const tr = e.target.closest('tr[data-pick]');
   if (tr) select(tr.dataset.pick === selected ? null : tr.dataset.pick, true);
 });
+
+// ---------- D5: zoom slider and drag, one per view ----------
+// The slider is logarithmic (0–100 → ×1 to ×30) so each step feels the same. Dragging pans once zoomed in;
+// a drag of more than 4 px is not a click, so it never selects a track. At ×1 a touch swipe scrolls the page.
+const ZOOM_MAX = 30;
+for (const v of Object.values(views)) {
+  const slider = document.getElementById(`zoom-${v.kind}`);
+  const readout = document.getElementById(`zoom-${v.kind}-val`);
+  const canvas = v.renderer.domElement;
+  const setZoom = (z) => {
+    v.zoom = z;
+    if (z <= 1) { v.cx = 0; v.cy = 0; }
+    applyCamera(v);
+    readout.textContent = `×${z.toFixed(1)}`;
+    canvas.style.touchAction = z > 1 ? 'none' : '';
+    requestRender();
+  };
+  slider.addEventListener('input', () => setZoom(Math.pow(ZOOM_MAX, slider.value / 100)));
+  document.getElementById(`reset-${v.kind}`).addEventListener('click', () => { slider.value = 0; setZoom(1); });
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (v.zoom <= 1 || e.button !== 0) return;
+    v.drag = { x: e.clientX, y: e.clientY, cx: v.cx, cy: v.cy, moved: false };
+    canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!v.drag) return;
+    const dx = e.clientX - v.drag.x, dy = e.clientY - v.drag.y;
+    if (!v.drag.moved && Math.hypot(dx, dy) < 4) return;
+    v.drag.moved = true;
+    canvas.style.cursor = 'grabbing';
+    const perPx = (2 * v.baseW) / v.zoom / v.w; // mm per screen pixel
+    v.cx = v.drag.cx - dx * perPx;
+    v.cy = v.drag.cy + dy * perPx;
+    applyCamera(v);
+    requestRender();
+  });
+  const endDrag = () => {
+    if (!v.drag) return;
+    v.dragged = v.drag.moved;          // the click that follows this pointerup is ignored after a real drag
+    v.drag = null;
+    canvas.style.cursor = v.zoom > 1 ? 'grab' : '';
+    setTimeout(() => { v.dragged = false; }, 0);
+  };
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+}
 
 // ---------- showing an event ----------
 let current = -1, request = 0;
