@@ -2,8 +2,8 @@
 // B1: load three.js, make it the global THREE, then load and start Phoenix.
 // Phoenix's bundle expects THREE as a global, so the order matters.
 import * as THREE from 'three';
-import { COLORS, buildEndDetector, buildSideDetector } from './detector.js';
-import { prepareEvent, etaToTheta } from './prepare.js';
+import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=d3a';
+import { prepareEvent, etaToTheta } from './prepare.js?v=d3a';
 
 const PHOENIX_URL = 'https://cdn.jsdelivr.net/npm/phoenix-event-display@4.2.3/dist/bundle/phoenix.min.js';
 

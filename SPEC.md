@@ -59,6 +59,7 @@ SPEC.md
 - Plain-word labels ("momentum", "direction", "charge"); symbols (p, pT, η, φ, θ, q) only behind a "?" on hover or tap. Short text blocks. A session is about 20 minutes.
 - Store a Data / Simulation flag for every event; run numbers alone are not proof.
 - Muon-chamber hits: show only on-track hits by default (most hits are background).
+- **Cache-busting:** every CSS/JS link and local import carries `?v=<step>` (now `d3a`). Bump it in all four places (index.html ×2, main.js ×2, prepare.js ×1) in any commit that changes CSS or JS; Pages lets browsers cache files for 10 min, and a stale mix breaks the page. Every import of a file must use the same `?v=`, or it loads twice.
 - One step = one session = one commit, named with the step ("A3 page skeleton"). Do only the step asked; don't change other features. Return complete changed files plus a one-line summary.
 - No analytics or tracking until a consent check for under-16s is decided.
 
