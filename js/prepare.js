@@ -27,10 +27,49 @@ function placeDeposit(c, layer) {
 const pick = (groups, preferred) =>
   (groups && (groups[preferred] || Object.values(groups).find((l) => Array.isArray(l) && l.length))) || [];
 
-// Returns { phoenix, side, meta }:
+// D3: charge comes from the raw XML. JiveXML stores pt with a sign (charge × pT); Phoenix's own q/p sign does not
+// match it (≈ half the tracks disagree), while the XML sign matched all 46 checked lepton charges. Phoenix keeps the
+// XML track order but renames collections (Tracks → Tracks_), so collections are paired by count and |pt|.
+function xmlTrackPts(xmlText) {
+  const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+  return [...doc.querySelectorAll('Track')].map((el) => {
+    const ptEl = el.querySelector('pt');
+    return ptEl ? ptEl.textContent.trim().split(/\s+/).map(Number) : [];
+  });
+}
+function chargesFor(list, xmlLists) {
+  const x = xmlLists.find((pts) => pts.length === list.length &&
+    list.every((t, i) => Math.abs(Math.abs(pts[i]) * 1000 - t.pT) < 1)); // XML pt in GeV, Phoenix pT in MeV
+  return x ? x.map(Math.sign) : null;
+}
+
+// One table row per track, highest pT first. Energies in GeV, angles in degrees (φ 0–360, as in the header bar).
+const DEG = 180 / Math.PI;
+function trackRows(tracks, xmlLists) {
+  const rows = [];
+  for (const [name, list] of Object.entries(tracks)) {
+    const q = chargesFor(list, xmlLists);
+    list.forEach((t, i) => {
+      const pT = t.pT / 1000;
+      rows.push({
+        pickId: t.pickId,
+        p: pT * Math.cosh(t.eta),
+        pT,
+        eta: t.eta,
+        phi: ((t.phi * DEG) % 360 + 360) % 360,
+        theta: etaToTheta(t.eta) * DEG, // Phoenix's dparams θ is folded to ±90°, so θ comes from η
+        q: q ? q[i] : 0,                // 0 = unknown (shown as "?")
+      });
+    });
+  }
+  return rows.sort((a, b) => b.pT - a.pT);
+}
+
+// Returns { phoenix, side, meta, rows }:
 //   phoenix — event for Phoenix to draw in the end view (barrel objects only, as in HYPATIA)
 //   side    — the same objects, all of them, for this page's ρ–z side view
-export function prepareEvent(raw) {
+//   rows    — the object table (D3); needs the raw XML text for the charges
+export function prepareEvent(raw, xmlText) {
   const meta = { eventNumber: raw.eventNumber, runNumber: raw.runNumber, met: null, metPhi: null };
 
   const tracks = {};
@@ -73,5 +112,6 @@ export function prepareEvent(raw) {
     phoenix: { ...base, Hits: hitsBarrel, CaloCells: cellsBarrel },
     side: { ...base, Hits: hitsAll, CaloCells: cellsAll },
     meta,
+    rows: trackRows(tracks, xmlText ? xmlTrackPts(xmlText) : []),
   };
 }

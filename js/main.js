@@ -254,6 +254,49 @@ function requestRender() {
 }
 status('Detector drawn in both views');
 
+// ---------- D3: object table ----------
+// One row per track, highest pT first. Each row carries the track's pickId for click linking (D4).
+// No particle-type column, and nothing marks long tracks: the table must not give away the answer.
+const objRows = document.getElementById('obj-rows');
+const objCount = document.getElementById('obj-count');
+function showRows(rows) {
+  const f1 = (x) => x.toFixed(1), f2 = (x) => x.toFixed(2);
+  objRows.innerHTML = rows.map((r, k) => `<tr data-pick="${r.pickId}">` +
+    `<td class="num">${k + 1}</td><td>${f1(r.p)}</td><td>${f1(r.pT)}</td><td>${f2(r.eta)}</td>` +
+    `<td>${Math.round(r.phi)}°</td><td>${Math.round(r.theta)}°</td><td>${r.q > 0 ? '+' : r.q < 0 ? '−' : '?'}</td></tr>`).join('');
+  objCount.textContent = `${rows.length}, highest momentum across the beam first · momentum in GeV`;
+  objRows.parentElement.parentElement.scrollTop = 0;
+}
+
+// "?" explanations: shown on hover, and on tap / click / keyboard (stays until tapped again or tapped elsewhere).
+const tipBox = document.getElementById('tip-box');
+let tipPinned = null;
+function placeTip(btn) {
+  tipBox.textContent = btn.dataset.tip;
+  tipBox.hidden = false;
+  const b = btn.getBoundingClientRect(), w = Math.min(280, window.innerWidth - 32);
+  tipBox.style.width = `${w}px`;
+  tipBox.style.left = `${Math.max(16, Math.min(b.left + b.width / 2 - w / 2, window.innerWidth - w - 16))}px`;
+  const h = tipBox.offsetHeight;
+  tipBox.style.top = `${b.top - h - 8 >= 8 ? b.top - h - 8 : b.bottom + 8}px`;
+}
+function hideTip() { tipBox.hidden = true; tipPinned = null; }
+for (const btn of document.querySelectorAll('.tip')) {
+  btn.textContent = '?';
+  btn.addEventListener('mouseenter', () => { if (!tipPinned) placeTip(btn); });
+  btn.addEventListener('mouseleave', () => { if (!tipPinned) tipBox.hidden = true; });
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (tipPinned === btn) { hideTip(); return; }
+    tipPinned = btn;
+    placeTip(btn);
+  });
+}
+document.addEventListener('click', () => { if (tipPinned) hideTip(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
+window.addEventListener('scroll', hideTip, { passive: true });
+document.querySelector('.table-wrap').addEventListener('scroll', hideTip, { passive: true });
+
 // ---------- showing an event ----------
 let current = -1, request = 0;
 const prevBtn = document.getElementById('prev');
@@ -306,8 +349,9 @@ async function showEvent(i) {
     return;
   }
   if (mine !== request) return; // the student has already moved on
-  const prepared = prepareEvent(readEvent(text));
+  const prepared = prepareEvent(readEvent(text), text);
   showMet(prepared.meta);
+  showRows(prepared.rows);
   ed.parsePhoenixEvents({ [EVENTS[i].file]: prepared.phoenix });
   try { ed.getThreeManager().getRendererManager().getMainRenderer().setAnimationLoop(null); } catch (e) { /* keep Phoenix's hidden loop */ }
   disposeRZ();

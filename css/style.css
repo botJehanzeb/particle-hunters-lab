@@ -124,7 +124,8 @@ h2 {
   }
   .display { grid-template-columns: 1fr 1fr; }
   .stage { height: max(380px, calc(100vh - 390px)); }
-  .objects { height: 200px; overflow: auto; }
+  .objects { height: 240px; }
+  .table-wrap { max-height: 186px; }
 }
 
 /* ---------- layer switches and colour key ---------- */
@@ -165,6 +166,31 @@ h2 {
 .pick { display: flex; align-items: center; gap: 8px; margin-top: 8px; font: 13px var(--mono); color: var(--text-mute); }
 .pick select { padding-right: 8px; }
 .counter { margin: 10px 0 4px; font-family: var(--mono); font-size: 15px; }
+
+/* ---------- D3 object table ---------- */
+.obj-count { text-transform: none; letter-spacing: 0; margin-left: 6px; font-weight: 400; }
+.table-wrap { max-height: 320px; overflow: auto; border: 1px solid var(--line); border-radius: 6px; }
+.obj-table { width: 100%; border-collapse: collapse; font: 13px var(--mono); font-variant-numeric: tabular-nums; }
+.obj-table th, .obj-table td { padding: 4px 10px; text-align: right; white-space: nowrap; }
+.obj-table th { position: sticky; top: 0; z-index: 1; background: var(--ink); border-bottom: 1px solid var(--line); vertical-align: bottom; font-weight: 500; }
+.obj-table th .sym { font: italic 500 16px var(--serif); }
+.obj-table th .sym sub { font-size: 11px; font-style: normal; vertical-align: -0.3em; line-height: 0; }
+.obj-table th .cap { display: block; font-size: 11px; font-weight: 400; color: var(--text-mute); }
+.obj-table td.num, .obj-table th.num { color: var(--text-mute); }
+.obj-table tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.025); }
+.obj-table tbody tr:hover { background: rgba(255, 201, 64, 0.08); }
+.tip {
+  margin-left: 4px; width: 18px; height: 18px; padding: 0; vertical-align: 2px;
+  font: 500 11px var(--mono); line-height: 16px; color: var(--text-mute);
+  background: none; border: 1px solid var(--line); border-radius: 50%; cursor: help;
+}
+.tip:hover, .tip:focus-visible { color: var(--gold); border-color: var(--gold); }
+.tip-box {
+  position: fixed; z-index: 10; margin: 0; padding: 8px 10px;
+  font: 14px/1.4 var(--serif); color: var(--text);
+  background: var(--ink); border: 1px solid var(--gold); border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
 
 /* ---------- D2 event header bar ---------- */
 .event-bar {

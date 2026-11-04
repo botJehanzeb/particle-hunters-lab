@@ -73,8 +73,24 @@
   </aside>
 
   <section class="objects" aria-label="Object table">
-    <h2>Objects</h2>
-    <p class="placeholder">Object table</p>
+    <h2>Tracks <span class="obj-count" id="obj-count"></span></h2>
+    <div class="table-wrap">
+      <table class="obj-table" id="obj-table">
+        <thead>
+          <tr>
+            <th scope="col" class="num">#</th>
+            <th scope="col"><span class="sym">p</span><button class="tip" type="button" aria-label="What is p?" data-tip="Momentum: how much 'push' the particle carries, in GeV. Heavier or faster particles have more."></button><span class="cap">momentum</span></th>
+            <th scope="col"><span class="sym">p<sub>T</sub></span><button class="tip" type="button" aria-label="What is pT?" data-tip="Transverse momentum: the part of the momentum that goes sideways, across the beam, in GeV. This is the part you see in the end view."></button><span class="cap">across beam</span></th>
+            <th scope="col"><span class="sym">η</span><button class="tip" type="button" aria-label="What is η?" data-tip="Pseudorapidity (eta): how far the track tilts toward either end of the detector. 0 means straight out sideways; big numbers (+ or −) mean close to the beam."></button><span class="cap">tilt</span></th>
+            <th scope="col"><span class="sym">φ</span><button class="tip" type="button" aria-label="What is φ?" data-tip="Phi: the direction around the beam in the end view, in degrees, counted anticlockwise from the right (0° = right, 90° = up)."></button><span class="cap">direction</span></th>
+            <th scope="col"><span class="sym">θ</span><button class="tip" type="button" aria-label="What is θ?" data-tip="Theta: the angle between the track and the beam, in degrees. 90° means straight out sideways; near 0° or 180° means close to the beam."></button><span class="cap">angle to beam</span></th>
+            <th scope="col"><span class="sym">q</span><button class="tip" type="button" aria-label="What is q?" data-tip="Charge: + or −. You can tell from which way the track bends in the magnetic field."></button><span class="cap">charge</span></th>
+          </tr>
+        </thead>
+        <tbody id="obj-rows"></tbody>
+      </table>
+    </div>
+    <p class="tip-box" id="tip-box" role="tooltip" hidden></p>
   </section>
 </main>
 
