@@ -2,8 +2,8 @@
 // B1: load three.js, make it the global THREE, then load and start Phoenix.
 // Phoenix's bundle expects THREE as a global, so the order matters.
 import * as THREE from 'three';
-import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=d6b';
-import { prepareEvent, etaToTheta, DEFAULT_CUTS } from './prepare.js?v=d6b';
+import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=e1';
+import { prepareEvent, etaToTheta, DEFAULT_CUTS } from './prepare.js?v=e1';
 import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
@@ -63,23 +63,34 @@ status('Phoenix 4.2.3 started');
 // ---------- C3: events, loaded one at a time when shown ----------
 // events/50/index.json lists the browse set in order. Each event file is fetched only when it is shown;
 // its neighbours are fetched in the background so Previous / Next feel instant. Fetched files are kept.
-const EVENT_DIR = new URLSearchParams(location.search).get('set') === 'balance' ? 'events/balance/' : 'events/50/';
-const indexRes = await fetch(`${EVENT_DIR}index.json`);
-if (!indexRes.ok) throw new Error(`Could not load ${EVENT_DIR}index.json (${indexRes.status})`);
-const EVENTS = (await indexRes.json()).events;
+// E1: two sets, switched in place: the browse set (events/50/) and the balance set (events/balance/) for question 1.
+const SETS = { 50: 'events/50/', balance: 'events/balance/' };
+const setIndex = new Map(); // set name -> Promise<events[]>
+function loadIndex(name) {
+  if (!setIndex.has(name)) {
+    setIndex.set(name, fetch(`${SETS[name]}index.json`).then((res) => {
+      if (!res.ok) throw new Error(`Could not load ${SETS[name]}index.json (${res.status})`);
+      return res.json();
+    }).then((j) => j.events));
+    setIndex.get(name).catch(() => setIndex.delete(name));
+  }
+  return setIndex.get(name);
+}
+let setName = new URLSearchParams(location.search).get('set') === 'balance' ? 'balance' : '50';
+let EVENTS = await loadIndex(setName);
 status(`${EVENTS.length} events listed; each loads when shown`);
 
-const fetched = new Map(); // file name -> Promise<string>
+const fetched = new Map(); // folder + file name -> Promise<string>
 function fetchText(i) {
-  const file = EVENTS[i].file;
-  if (!fetched.has(file)) {
-    fetched.set(file, fetch(EVENT_DIR + file).then((res) => {
+  const file = EVENTS[i].file, key = SETS[setName] + file;
+  if (!fetched.has(key)) {
+    fetched.set(key, fetch(key).then((res) => {
       if (!res.ok) throw new Error(`Could not load ${file} (${res.status})`);
       return res.text();
     }));
-    fetched.get(file).catch(() => fetched.delete(file)); // allow a retry after a failed fetch
+    fetched.get(key).catch(() => fetched.delete(key)); // allow a retry after a failed fetch
   }
-  return fetched.get(file);
+  return fetched.get(key);
 }
 function readEvent(text) {
   if (!window.JiveXMLLoader) throw new Error('Phoenix JiveXMLLoader is missing');
@@ -522,8 +533,12 @@ function showMet(meta) {
 }
 // D1: dropdown of all events (numbers only — nothing that hints at the answer).
 const pick = document.getElementById('pick');
-EVENTS.forEach((_, i) => pick.add(new Option(`Event ${i + 1}`, String(i))));
-pick.disabled = false;
+function fillPick() {
+  pick.length = 0;
+  EVENTS.forEach((_, i) => pick.add(new Option(`Event ${i + 1}`, String(i))));
+  pick.disabled = false;
+}
+fillPick();
 pick.addEventListener('change', () => showEvent(Number(pick.value)));
 
 async function showEvent(i) {
@@ -552,7 +567,7 @@ async function showEvent(i) {
     return;
   }
   if (mine !== request) return; // the student has already moved on
-  shown = { raw: readEvent(text), text, file: EVENTS[i].file };
+  shown = { raw: readEvent(text), text, file: SETS[setName] + EVENTS[i].file };
   drawEvent(null);
   current = i;
   loadNote.textContent = `Shown in ${Math.round(performance.now() - t0)} ms`;
@@ -562,8 +577,44 @@ async function showEvent(i) {
 prevBtn.addEventListener('click', () => { if (current > 0) showEvent(current - 1); });
 nextBtn.addEventListener('click', () => { if (current < EVENTS.length - 1) showEvent(current + 1); });
 
+// ---------- E1: set switch and question buttons ----------
+// Switching set reloads the dropdown and shows the chosen event of the new set; the URL keeps ?set=balance.
+const setRadios = [...document.querySelectorAll('input[name="event-set"]')];
+const syncSetRadios = () => { for (const r of setRadios) r.checked = r.value === setName; };
+async function openSet(name, i = 0) {
+  if (name !== setName) {
+    let list;
+    try {
+      list = await loadIndex(name);
+    } catch (err) {
+      loadNote.textContent = `Could not load this set. ${err.message}`;
+      syncSetRadios();
+      return;
+    }
+    setName = name;
+    EVENTS = list;
+    current = -1;
+    fillPick();
+    const url = new URL(location.href);
+    if (name === 'balance') url.searchParams.set('set', 'balance'); else url.searchParams.delete('set');
+    history.replaceState(null, '', url);
+  }
+  syncSetRadios();
+  await showEvent(Math.max(0, Math.min(EVENTS.length - 1, i)));
+}
+syncSetRadios();
+for (const r of setRadios) r.addEventListener('change', () => { if (r.checked) openSet(r.value); });
+for (const b of document.querySelectorAll('.questions .go')) {
+  b.addEventListener('click', () => {
+    openSet(b.dataset.set, Number(b.dataset.event));
+    // On a phone the views are above the questions: bring them into sight. On a laptop they already are.
+    const d = document.querySelector('.display'), r = d.getBoundingClientRect();
+    if (r.top < 0 || r.top > window.innerHeight * 0.5) d.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
 // Shared with later steps.
-window.lab = { THREE, ed, EVENTS, fetched, showEvent, views, get rz() { return rz; }, requestRender, applyVisibility, select, get selected() { return selected; }, nearestTrack, toPixels, get trackPts() { return trackPts; } };
+window.lab = { THREE, ed, get EVENTS() { return EVENTS; }, get set() { return setName; }, openSet, fetched, showEvent, views, get rz() { return rz; }, requestRender, applyVisibility, select, get selected() { return selected; }, nearestTrack, toPixels, get trackPts() { return trackPts; } };
 
 await showEvent(0);
 setTimeout(requestRender, 500);

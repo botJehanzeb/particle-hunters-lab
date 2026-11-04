@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="css/style.css?v=d6b">
+<link rel="stylesheet" href="css/style.css?v=e1">
 </head>
 <body>
 
@@ -83,6 +83,11 @@
 
   <aside class="event-info" aria-label="Event information">
     <h2>Event</h2>
+    <div class="set-switch" role="radiogroup" aria-label="Which events to browse">
+      <label class="radio"><input type="radio" name="event-set" value="50" checked> All 50</label>
+      <label class="radio"><input type="radio" name="event-set" value="balance"> Balance set (7)</label>
+      <button class="tip" type="button" aria-label="What is the balance set?" data-tip="Seven real collisions picked for question 1. Each has two fast tracks that are easy to compare."></button>
+    </div>
     <div class="nav">
       <button class="btn" id="prev" type="button" disabled>← Previous</button>
       <button class="btn" id="next" type="button" disabled>Next →</button>
@@ -90,6 +95,47 @@
     <label class="pick">Go to <select class="btn" id="pick" disabled></select></label>
     <p class="counter" id="counter" aria-live="polite">Event –/–</p>
     <p class="placeholder" id="load-note"></p>
+
+    <h2 class="questions-head">Questions</h2>
+    <ol class="questions">
+      <li class="q">
+        <p>In which view is momentum conserved: the end view or the side view?</p>
+        <p class="how">Open balance event 1. Click the two fastest tracks (rows 1 and 2 of the table) and look at where they point in each view. Do they point in opposite directions, so that they balance?</p>
+        <button class="btn btn-sm go" type="button" data-set="balance" data-event="0">Go to balance event 1</button>
+        <details>
+          <summary>Show answer</summary>
+          <p><b>The end view.</b> Before the collision the protons move only along the beam, so their momentum across the beam is zero. After it, the momentum across the beam still adds up to about zero. In the end view the two fast tracks point almost exactly opposite ways (φ 337° and 158°) with similar p<sub>T</sub> (43.5 and 36.0 GeV).</p>
+          <p>Along the beam it doesn't balance. Each colliding quark or gluon carries an unknown share of its proton's momentum. In this event both tracks head toward the same end of the detector. Try the other six balance events: it's the same every time.</p>
+        </details>
+      </li>
+      <li class="q">
+        <p>In event 4, how many tracks have momentum across the beam (p<sub>T</sub>) above 10 GeV?</p>
+        <p class="how">Use “Hide: tracks below”.</p>
+        <button class="btn btn-sm go" type="button" data-set="50" data-event="3">Go to event 4</button>
+        <details>
+          <summary>Show answer</summary>
+          <p><b>One.</b> Set the track cut to 10 GeV and the table shows “1 of 509”: a single track with p<sub>T</sub> = 72.8 GeV. The other 508 are much slower. Most tracks in a collision are soft, which is why the cut helps.</p>
+        </details>
+      </li>
+      <li class="q">
+        <p>Event 1 has two tracks that are much longer than all the others. Which layer of the detector do they reach?</p>
+        <p class="how">Compare them with the colour key under the views.</p>
+        <button class="btn btn-sm go" type="button" data-set="50" data-event="0">Go to event 1</button>
+        <details>
+          <summary>Show answer</summary>
+          <p><b>The muon chambers</b>, the outermost layer. Almost everything else stops in the calorimeters. Only one kind of charged particle gets all the way through, and you'll find out which in Stage 2.</p>
+        </details>
+      </li>
+      <li class="q">
+        <p>Which tracks bend the most in the end view: those with small momentum across the beam or those with large?</p>
+        <p class="how">Set “Hide: tracks below” to “show all”, zoom in on the centre of the end view, and click a few tracks to read their p<sub>T</sub>.</p>
+        <details>
+          <summary>Show answer</summary>
+          <p><b>Small p<sub>T</sub>.</b> A magnet inside ATLAS bends charged particles around the beam. The less momentum a particle has, the tighter it curls. Very fast tracks look almost straight.</p>
+        </details>
+      </li>
+    </ol>
+
     <h2 class="status-head">Status</h2>
     <ol class="status" id="status" aria-live="polite"></ol>
   </aside>
@@ -144,7 +190,7 @@
   })();
 </script>
 
-<script type="module" src="js/main.js?v=d6b"></script>
+<script type="module" src="js/main.js?v=e1"></script>
 
 </body>
 </html>

@@ -1,6 +1,6 @@
 // Turns Phoenix's JiveXML event data into what the two views draw.
 // Deposit placement, jets and missing energy follow the two-view test page.
-import { COLORS, muonHitIsEndcap, barrelSegmentInSector } from './detector.js?v=d6b';
+import { COLORS, muonHitIsEndcap, barrelSegmentInSector } from './detector.js?v=e1';
 
 export const etaToTheta = (eta) => 2 * Math.atan(Math.exp(-eta));
 const MET_LENGTH = 10500; // mm: missing energy is drawn as a direction, out to the muon chambers

@@ -132,6 +132,8 @@ h2 {
   .stage { height: max(380px, calc(100vh - 390px)); }
   .objects { height: 240px; }
   .table-wrap { max-height: 186px; }
+  /* E1: the side panel scrolls on its own, so the questions never make the views row taller. */
+  .event-info { height: 0; min-height: 100%; overflow-y: auto; }
 }
 
 /* ---------- layer switches and colour key ---------- */
@@ -254,3 +256,18 @@ h2 {
   font-size: 14px;
   color: var(--text-mute);
 }
+
+/* ---------- E1 set switch and questions ---------- */
+.set-switch { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; margin-bottom: 10px; font: 13px var(--mono); }
+.set-switch .radio { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+.set-switch .radio input { accent-color: var(--gold); margin: 0; }
+.questions-head { margin-top: 18px; }
+.questions { margin: 0; padding: 0 0 0 1.4em; display: grid; gap: 14px; font-size: 15px; line-height: 1.45; }
+.questions li::marker { font: 500 13px var(--mono); color: var(--gold); }
+.q p { margin: 0 0 6px; }
+.q .how { color: var(--text-mute); font-size: 14px; }
+.q .go { margin: 2px 0 6px; }
+.q details { border-left: 2px solid var(--line); padding-left: 10px; }
+.q summary { cursor: pointer; font: 500 13px var(--mono); color: var(--gold); min-height: 28px; display: flex; align-items: center; }
+.q details[open] summary { color: var(--text-mute); }
+.q details p { font-size: 14px; }
