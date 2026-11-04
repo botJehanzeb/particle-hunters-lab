@@ -2,8 +2,11 @@
 // B1: load three.js, make it the global THREE, then load and start Phoenix.
 // Phoenix's bundle expects THREE as a global, so the order matters.
 import * as THREE from 'three';
-import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=d3a';
-import { prepareEvent, etaToTheta } from './prepare.js?v=d3a';
+import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=d4';
+import { prepareEvent, etaToTheta } from './prepare.js?v=d4';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 
 const PHOENIX_URL = 'https://cdn.jsdelivr.net/npm/phoenix-event-display@4.2.3/dist/bundle/phoenix.min.js';
 
@@ -235,15 +238,22 @@ function fit(v) {
   Object.assign(v.camera, { left: -halfW, right: halfW, top: halfH, bottom: -halfH });
   v.camera.updateProjectionMatrix();
 }
+// D4: the selected track is drawn again, thick and purple, in a scene of its own on top of each view.
+const hl = { end: new THREE.Scene(), side: new THREE.Scene() };
 function renderView(v) {
   const r = v.renderer;
   r.clear();
   r.render(v.detScene, v.camera);
-  if (v.kind === 'side') { if (rz) r.render(rz.scene, v.camera); return; }
-  const bg = phScene.background;
-  phScene.background = null;
-  r.render(phScene, v.camera);
-  phScene.background = bg;
+  if (v.kind === 'side') {
+    if (rz) r.render(rz.scene, v.camera);
+  } else {
+    const bg = phScene.background;
+    phScene.background = null;
+    r.render(phScene, v.camera);
+    phScene.background = bg;
+  }
+  hl[v.kind].traverse((o) => { if (o.material && o.material.resolution) o.material.resolution.set(v.w, v.h); });
+  r.render(hl[v.kind], v.camera);
 }
 const views = { end: makeView('end', buildEndDetector()), side: makeView('side', buildSideDetector()) };
 let pending = false;
@@ -296,6 +306,103 @@ document.addEventListener('click', () => { if (tipPinned) hideTip(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
 window.addEventListener('scroll', hideTip, { passive: true });
 document.querySelector('.table-wrap').addEventListener('scroll', hideTip, { passive: true });
+
+// ---------- D4: click linking ----------
+// Clicks are handled here, not by Phoenix (its highlight shows in one view only and its click detection assumes a
+// full-page display). The page finds the track nearest the pointer in either view, in screen pixels, and draws a
+// thick purple copy of it in both views; the matching table row is highlighted too. A row click does the same.
+const PICK_PX = 8;            // a click within this many pixels of a track picks it
+const HL_COLOR = 0xb36bff;    // purple: not used by any detector part or object
+let trackPts = new Map();     // pickId -> { end: Vector3[], side: Vector3[] } in each view's drawing coordinates
+let selected = null;
+
+function indexTracks(side) {
+  trackPts = new Map();
+  for (const list of Object.values(side.Tracks || {})) {
+    for (const t of list) {
+      if (!Array.isArray(t.pos) || t.pos.length < 2) continue;
+      const s = half(t.pos[t.pos.length - 1][1]); // same upper/lower choice as the side-view drawing
+      trackPts.set(t.pickId, {
+        end: t.pos.map((p) => new THREE.Vector3(p[0], p[1], 0)),
+        side: t.pos.map((p) => new THREE.Vector3(0, s * Math.hypot(p[0], p[1]), p[2])),
+      });
+    }
+  }
+}
+
+function toPixels(v, pts) {
+  return pts.map((p) => {
+    const n = p.clone().project(v.camera);
+    return [((n.x + 1) / 2) * v.w, ((1 - n.y) / 2) * v.h];
+  });
+}
+function segDist(px, py, a, b) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy;
+  const u = L ? Math.max(0, Math.min(1, ((px - a[0]) * dx + (py - a[1]) * dy) / L)) : 0;
+  return Math.hypot(px - (a[0] + u * dx), py - (a[1] + u * dy));
+}
+function nearestTrack(v, px, py) {
+  if (!document.getElementById('show-tracks').checked) return null;
+  let best = null, bestD = PICK_PX;
+  for (const [id, pts] of trackPts) {
+    const s = toPixels(v, pts[v.kind]);
+    for (let k = 1; k < s.length; k++) {
+      const d = segDist(px, py, s[k - 1], s[k]);
+      if (d < bestD) { bestD = d; best = id; }
+    }
+  }
+  return best;
+}
+
+function thickLine(pts) {
+  const geo = new LineGeometry();
+  geo.setPositions(pts.flatMap((p) => [p.x, p.y, p.z]));
+  const line = new Line2(geo, new LineMaterial({ color: HL_COLOR, linewidth: 4, depthTest: false }));
+  line.computeLineDistances();
+  line.renderOrder = 10;
+  return line;
+}
+function clearHighlight() {
+  for (const scene of Object.values(hl)) {
+    for (const o of [...scene.children]) { scene.remove(o); o.geometry.dispose(); o.material.dispose(); }
+  }
+  for (const tr of objRows.querySelectorAll('tr.selected')) tr.classList.remove('selected');
+}
+function select(id, fromRow = false) {
+  clearHighlight();
+  selected = id && trackPts.has(id) ? id : null;
+  if (selected) {
+    const pts = trackPts.get(selected);
+    hl.end.add(thickLine(pts.end));
+    hl.side.add(thickLine(pts.side));
+    const tr = objRows.querySelector(`tr[data-pick="${CSS.escape(selected)}"]`);
+    if (tr) {
+      tr.classList.add('selected');
+      if (!fromRow) tr.scrollIntoView({ block: 'nearest' });
+    }
+  }
+  syncHighlight();
+}
+// The highlight follows the Tracks switch: hidden tracks can't be selected or shown.
+function syncHighlight() {
+  const on = document.getElementById('show-tracks').checked;
+  hl.end.visible = hl.side.visible = on;
+  requestRender();
+}
+document.getElementById('show-tracks').addEventListener('change', syncHighlight);
+
+for (const v of Object.values(views)) {
+  const canvas = v.renderer.domElement;
+  canvas.addEventListener('click', (e) => select(nearestTrack(v, e.offsetX, e.offsetY)));
+  canvas.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    canvas.style.cursor = nearestTrack(v, e.offsetX, e.offsetY) ? 'pointer' : '';
+  });
+}
+objRows.addEventListener('click', (e) => {
+  const tr = e.target.closest('tr[data-pick]');
+  if (tr) select(tr.dataset.pick === selected ? null : tr.dataset.pick, true);
+});
 
 // ---------- showing an event ----------
 let current = -1, request = 0;
@@ -352,6 +459,8 @@ async function showEvent(i) {
   const prepared = prepareEvent(readEvent(text), text);
   showMet(prepared.meta);
   showRows(prepared.rows);
+  indexTracks(prepared.side);
+  select(null);
   ed.parsePhoenixEvents({ [EVENTS[i].file]: prepared.phoenix });
   try { ed.getThreeManager().getRendererManager().getMainRenderer().setAnimationLoop(null); } catch (e) { /* keep Phoenix's hidden loop */ }
   disposeRZ();
@@ -367,7 +476,7 @@ prevBtn.addEventListener('click', () => { if (current > 0) showEvent(current - 1
 nextBtn.addEventListener('click', () => { if (current < EVENTS.length - 1) showEvent(current + 1); });
 
 // Shared with later steps.
-window.lab = { THREE, ed, EVENTS, fetched, showEvent, views, get rz() { return rz; }, requestRender, applyVisibility };
+window.lab = { THREE, ed, EVENTS, fetched, showEvent, views, get rz() { return rz; }, requestRender, applyVisibility, select, get selected() { return selected; }, nearestTrack, toPixels, get trackPts() { return trackPts; } };
 
 await showEvent(0);
 setTimeout(requestRender, 500);

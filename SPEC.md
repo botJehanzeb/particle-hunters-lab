@@ -17,9 +17,9 @@ Each stage goes live before the next one starts.
 
 ## Current step
 
-**D4 — click linking:** a click on a track in either view highlights it in both views and in the table; a click on a row highlights it in both views. *Done when:* works in both views on three different events.
+**D5 — two views with zoom:** two views side by side, each with its own zoom slider and drag: the end view from Phoenix, barrel only (end-cap deposits and hits left out), and your own ρ–z side view. *Done when:* each slider zooms only its own view; tracks show at full length in the side view.
 
-Done: Phases A, B and C; D1 (Previous / Next, "Go to" dropdown with event numbers only, counter — all kept in sync); D2 (full-width header bar: event N of M, run, ATLAS event number, date and time, Real data / Simulation badge, missing energy in GeV with its direction in degrees and an arrow that matches the end view); D3 (track table: #, p, pT, η, φ, θ, q, highest pT first, each symbol with a plain caption and a "?" explanation; each row has `data-pick` = the track's pickId for D4). C6 checked every event of both sets through the page (load, both views, Real data badge, date): 57/57, no page errors; all 52 long tracks end in the muon system. `?set=balance` opens the balance set until E1 adds the switch. Full step list: Phases A–E in the build plan (kept outside this repo).
+Done: Phases A, B and C; D1 (Previous / Next, "Go to" dropdown with event numbers only, counter — all kept in sync); D2 (full-width header bar: event N of M, run, ATLAS event number, date and time, Real data / Simulation badge, missing energy in GeV with its direction in degrees and an arrow that matches the end view); D3 (track table: #, p, pT, η, φ, θ, q, highest pT first, each symbol with a plain caption and a "?" explanation; each row has `data-pick` = the track's pickId); D4 (click linking: nearest track within 8 px in either view, projected through each view's camera, drawn as a thick purple `Line2` copy in both views plus the table row; row click selects; empty click / event change clears; follows the Tracks switch). C6 checked every event of both sets through the page (load, both views, Real data badge, date): 57/57, no page errors; all 52 long tracks end in the muon system. `?set=balance` opens the balance set until E1 adds the switch. Full step list: Phases A–E in the build plan (kept outside this repo).
 
 Open items: deposits are drawn thin (6 cm wide) and hard to see; the balance set only reads clearly once D6's pT cut hides soft tracks; remove the "Shown in N ms" note in polish (E).
 
@@ -59,7 +59,7 @@ SPEC.md
 - Plain-word labels ("momentum", "direction", "charge"); symbols (p, pT, η, φ, θ, q) only behind a "?" on hover or tap. Short text blocks. A session is about 20 minutes.
 - Store a Data / Simulation flag for every event; run numbers alone are not proof.
 - Muon-chamber hits: show only on-track hits by default (most hits are background).
-- **Cache-busting:** every CSS/JS link and local import carries `?v=<step>` (now `d3a`). Bump it in all four places (index.html ×2, main.js ×2, prepare.js ×1) in any commit that changes CSS or JS; Pages lets browsers cache files for 10 min, and a stale mix breaks the page. Every import of a file must use the same `?v=`, or it loads twice.
+- **Cache-busting:** every CSS/JS link and local import carries `?v=<step>` (now `d4`). Bump it in all four places (index.html ×2, main.js ×2, prepare.js ×1) in any commit that changes CSS or JS; Pages lets browsers cache files for 10 min, and a stale mix breaks the page. Every import of a file must use the same `?v=`, or it loads twice.
 - One step = one session = one commit, named with the step ("A3 page skeleton"). Do only the step asked; don't change other features. Return complete changed files plus a one-line summary.
 - No analytics or tracking until a consent check for under-16s is decided.
 
