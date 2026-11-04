@@ -2,8 +2,8 @@
 // B1: load three.js, make it the global THREE, then load and start Phoenix.
 // Phoenix's bundle expects THREE as a global, so the order matters.
 import * as THREE from 'three';
-import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=d5';
-import { prepareEvent, etaToTheta } from './prepare.js?v=d5';
+import { COLORS, buildEndDetector, buildSideDetector } from './detector.js?v=d6b';
+import { prepareEvent, etaToTheta, DEFAULT_CUTS } from './prepare.js?v=d6b';
 import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
@@ -110,7 +110,7 @@ function buildRZ(e) {
   for (const list of Object.values(e.Tracks || {})) {
     for (const t of list) {
       if (!Array.isArray(t.pos) || t.pos.length < 2) continue;   // e.g. MuonboyTrackParticles: no positions
-      const s = half(t.pos[t.pos.length - 1][1]);
+      const s = t.rzSign ?? half(t.pos[t.pos.length - 1][1]);
       const pts = t.pos.map((p) => new THREE.Vector3(0, s * Math.hypot(p[0], p[1]), p[2]));
       tracks.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), trackMat));
     }
@@ -144,7 +144,7 @@ function buildRZ(e) {
       if (!p || p.length < 3) continue;
       const two = p.length >= 6;
       const x = two ? (p[0] + p[3]) / 2 : p[0], y = two ? (p[1] + p[4]) / 2 : p[1], z = two ? (p[2] + p[5]) / 2 : p[2];
-      hitPts.push(new THREE.Vector3(0, half(y) * Math.hypot(x, y), z));
+      hitPts.push(new THREE.Vector3(0, (h.rzSign ?? half(y)) * Math.hypot(x, y), z)); // on-track hits: their track's half
     }
   }
   layers.Hits = new THREE.Points(new THREE.BufferGeometry().setFromPoints(hitPts),
@@ -278,12 +278,12 @@ status('Detector drawn in both views');
 // No particle-type column, and nothing marks long tracks: the table must not give away the answer.
 const objRows = document.getElementById('obj-rows');
 const objCount = document.getElementById('obj-count');
-function showRows(rows) {
+function showRows(rows, total) {
   const f1 = (x) => x.toFixed(1), f2 = (x) => x.toFixed(2);
   objRows.innerHTML = rows.map((r, k) => `<tr data-pick="${r.pickId}">` +
     `<td class="num">${k + 1}</td><td>${f1(r.p)}</td><td>${f1(r.pT)}</td><td>${f2(r.eta)}</td>` +
     `<td>${Math.round(r.phi)}°</td><td>${Math.round(r.theta)}°</td><td>${r.q > 0 ? '+' : r.q < 0 ? '−' : '?'}</td></tr>`).join('');
-  objCount.textContent = `${rows.length}, highest momentum across the beam first · momentum in GeV`;
+  objCount.textContent = `${rows.length} of ${total} shown, highest momentum across the beam first · momentum in GeV`;
   objRows.parentElement.parentElement.scrollTop = 0;
 }
 
@@ -330,7 +330,7 @@ function indexTracks(side) {
   for (const list of Object.values(side.Tracks || {})) {
     for (const t of list) {
       if (!Array.isArray(t.pos) || t.pos.length < 2) continue;
-      const s = half(t.pos[t.pos.length - 1][1]); // same upper/lower choice as the side-view drawing
+      const s = t.rzSign ?? half(t.pos[t.pos.length - 1][1]); // same upper/lower choice as the side-view drawing
       trackPts.set(t.pickId, {
         end: t.pos.map((p) => new THREE.Vector3(p[0], p[1], 0)),
         side: t.pos.map((p) => new THREE.Vector3(0, s * Math.hypot(p[0], p[1]), p[2])),
@@ -460,6 +460,46 @@ for (const v of Object.values(views)) {
   canvas.addEventListener('pointercancel', endDrag);
 }
 
+// ---------- D6: cuts and switches ----------
+// Changing a cut prepares the same event again and redraws both views and the table, so all three always agree.
+// A selected track stays selected if it passes the new cut.
+const PT_STEPS = [0, 0.5, 1, 2, 3, 5, 10, 20];  // GeV
+const ET_STEPS = [0, 0.2, 0.5, 1, 2, 5];        // GeV
+const cuts = { ...DEFAULT_CUTS };
+let shown = null; // { raw, text, file } of the event on screen
+
+function drawEvent(keepId) {
+  if (!shown) return;
+  const prepared = prepareEvent(shown.raw, shown.text, cuts);
+  showMet(prepared.meta);
+  showRows(prepared.rows, prepared.meta.nTracks);
+  ed.parsePhoenixEvents({ [shown.file]: prepared.phoenix });
+  try { ed.getThreeManager().getRendererManager().getMainRenderer().setAnimationLoop(null); } catch (e) { /* keep Phoenix's hidden loop */ }
+  disposeRZ();
+  rz = buildRZ(prepared.side);
+  indexTracks(prepared.side);
+  applyVisibility();
+  select(keepId);
+  window.lab.prepared = prepared;
+}
+
+let redrawTimer = 0;
+const redrawSoon = () => { clearTimeout(redrawTimer); redrawTimer = setTimeout(() => drawEvent(selected), 120); };
+function cutSlider(id, steps, key) {
+  const input = document.getElementById(id), out = document.getElementById(`${id}-val`);
+  input.max = steps.length - 1;
+  input.value = Math.max(0, steps.indexOf(cuts[key]));
+  const show = () => { out.textContent = cuts[key] > 0 ? `${cuts[key]} GeV` : 'show all'; };
+  show();
+  input.addEventListener('input', () => { cuts[key] = steps[Number(input.value)]; show(); redrawSoon(); });
+}
+cutSlider('cut-pt', PT_STEPS, 'minPT');
+cutSlider('cut-et', ET_STEPS, 'minET');
+for (const r of document.querySelectorAll('input[name="hits-mode"]')) {
+  r.checked = r.value === cuts.hits;
+  r.addEventListener('change', () => { if (r.checked) { cuts.hits = r.value; drawEvent(selected); } });
+}
+
 // ---------- showing an event ----------
 let current = -1, request = 0;
 const prevBtn = document.getElementById('prev');
@@ -512,19 +552,10 @@ async function showEvent(i) {
     return;
   }
   if (mine !== request) return; // the student has already moved on
-  const prepared = prepareEvent(readEvent(text), text);
-  showMet(prepared.meta);
-  showRows(prepared.rows);
-  indexTracks(prepared.side);
-  select(null);
-  ed.parsePhoenixEvents({ [EVENTS[i].file]: prepared.phoenix });
-  try { ed.getThreeManager().getRendererManager().getMainRenderer().setAnimationLoop(null); } catch (e) { /* keep Phoenix's hidden loop */ }
-  disposeRZ();
-  rz = buildRZ(prepared.side);
-  applyVisibility();
+  shown = { raw: readEvent(text), text, file: EVENTS[i].file };
+  drawEvent(null);
   current = i;
   loadNote.textContent = `Shown in ${Math.round(performance.now() - t0)} ms`;
-  window.lab.prepared = prepared;
   // Fetch the neighbours in the background.
   for (const j of [i + 1, i - 1]) if (j >= 0 && j < EVENTS.length) fetchText(j).catch(() => {});
 }

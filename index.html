@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="css/style.css?v=d5">
+<link rel="stylesheet" href="css/style.css?v=d6b">
 </head>
 <body>
 
@@ -49,6 +49,28 @@
       <label class="switch"><input type="checkbox" id="show-hits" checked><i class="sw" style="--c:#ff5a5a"></i>Muon-chamber hits</label>
       <label class="switch"><input type="checkbox" id="show-jets"><i class="sw" style="--c:#3f7fd0"></i>Jets</label>
       <label class="switch"><input type="checkbox" id="show-met" checked><i class="sw dash" style="--c:#ff6b6b"></i>Missing energy</label>
+    </div>
+
+    <div class="cuts" role="group" aria-label="Hide small things">
+      <span class="lbl">Hide</span>
+      <span class="cut">
+        <label for="cut-pt">Tracks below</label>
+        <input type="range" id="cut-pt" min="0" max="7" step="1" value="2">
+        <output id="cut-pt-val" for="cut-pt">1 GeV</output>
+        <button class="tip" type="button" aria-label="What does the track cut do?" data-tip="Hides tracks whose momentum across the beam (pT) is smaller than this. Most tracks are soft: hiding them makes the important ones easy to see. Changes both views and the table."></button>
+      </span>
+      <span class="cut">
+        <label for="cut-et">Deposits below</label>
+        <input type="range" id="cut-et" min="0" max="5" step="1" value="0">
+        <output id="cut-et-val" for="cut-et">show all</output>
+        <button class="tip" type="button" aria-label="What does the deposit cut do?" data-tip="Hides energy deposits whose energy across the beam (ET) is smaller than this. Changes both views."></button>
+      </span>
+      <span class="cut" role="radiogroup" aria-label="Which muon-chamber hits to show">
+        <span>Muon-chamber hits:</span>
+        <label class="radio"><input type="radio" name="hits-mode" value="track" checked> on muon tracks</label>
+        <label class="radio"><input type="radio" name="hits-mode" value="all"> all</label>
+        <button class="tip" type="button" aria-label="Which muon-chamber hits?" data-tip="Most hits in the muon chambers are background, not from this collision. 'On muon tracks' shows only the hits that belong to a long track; 'all' shows every hit."></button>
+      </span>
     </div>
 
     <div class="legend" aria-label="Colour key: detector parts">
@@ -122,7 +144,7 @@
   })();
 </script>
 
-<script type="module" src="js/main.js?v=d5"></script>
+<script type="module" src="js/main.js?v=d6b"></script>
 
 </body>
 </html>

@@ -145,6 +145,18 @@ h2 {
   font-family: var(--mono);
   font-size: 14px;
 }
+/* D6 cuts row */
+.cuts {
+  grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px;
+  padding: 10px 12px; background: var(--ink-2); border: 1px solid var(--line); border-radius: 6px;
+  font: 14px var(--mono);
+}
+.cut { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.cut input[type=range] { width: 110px; accent-color: var(--gold); }
+.cut output { min-width: 8ch; font-variant-numeric: tabular-nums; }
+.cut .radio { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+.cut .radio input { accent-color: var(--gold); margin: 0; }
+.cut .tip { margin-left: 0; }
 .lbl { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mute); }
 .switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; min-height: 32px; }
 .switch input { width: 18px; height: 18px; margin: 0; accent-color: var(--gold); }
